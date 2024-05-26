@@ -1,40 +1,64 @@
-import { HistoricoDoacao } from 'src/historico_doacao/entities/historico_doacao.entity';
 import { Interesse } from 'src/interesse/entities/interesse.entity';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import {
   Column,
-  JoinTable,
-  ManyToMany,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Doacao } from '../../doacao/entities/doacao.entity';
+import { ProjetoAssunto } from '../../assunto/entities/projeto-assunto.entity';
 
+@Entity()
 export class Projeto {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ name: 'titulo', type: 'string', nullable: false })
+  @Column({ name: 'titulo', type: 'varchar', nullable: false })
   titulo: string;
 
-  @Column({ name: 'motivacao', type: 'text', nullable: false })
+  @Column({ name: 'motivacao', type: 'varchar', length: 255, nullable: false })
   motivacao: string;
 
-  @Column({ name: 'descricao', type: 'text', nullable: false })
+  @Column({
+    name: 'descricao',
+    type: 'varchar',
+    length: 1024,
+    nullable: false,
+  })
   descricao: string;
 
-  @Column({ name: 'paeg', type: 'string', nullable: false })
+  @Column({ name: 'paeg', type: 'varchar', length: 64, nullable: false })
   paeg: string;
 
-  @Column({ name: 'anexos', type: 'string', nullable: false })
+  @Column({ name: 'anexos', type: 'varchar', length: 512, nullable: true })
   anexos: string;
 
-  @OneToMany(() => HistoricoDoacao, (doacao) => doacao.projeto)
-  doacoes: HistoricoDoacao[];
+  @Column({ name: 'num_vagas', type: 'int', nullable: false })
+  numVagas: number;
 
-  @ManyToMany(() => Usuario, (usuario) => usuario.projetos)
-  usuarios: Usuario[];
+  @Column({ name: 'carga_horaria', type: 'float', nullable: false })
+  cargaHoraria: number;
 
-  @ManyToMany(() => Interesse, (interesse) => interesse.projetos)
-  @JoinTable()
+  @Column({ name: 'data_inicio', type: 'date', nullable: false })
+  dataInicio: Date = new Date();
+
+  @Column({ name: 'data_fim', type: 'date', nullable: false })
+  dataFim: Date;
+
+  @ManyToOne(() => Usuario, (usuario) => usuario.projetos)
+  @JoinColumn({ name: 'responsavel', referencedColumnName: 'id' })
+  responsavel: Usuario;
+
+  @OneToOne(() => Doacao, (doacao) => doacao.projeto, { nullable: true })
+  doacao: Doacao;
+
+  @ManyToOne(() => Interesse, (interesse) => interesse.projeto)
   interesses: Interesse[];
+
+  @OneToMany(() => ProjetoAssunto, (projAssunto) => projAssunto.projeto)
+  assuntos: ProjetoAssunto[];
 }

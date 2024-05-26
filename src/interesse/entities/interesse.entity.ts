@@ -1,17 +1,29 @@
-import { Projeto } from 'src/projeto/entities/projeto.entity';
-import { Usuario } from 'src/usuario/entities/usuario.entity';
-import { Column, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Projeto } from '../../projeto/entities/projeto.entity';
+import { Usuario } from '../../usuario/entities/usuario.entity';
 
+@Entity()
 export class Interesse {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ name: 'nome', type: 'string', nullable: false })
-  nome: string;
+  @Column({ name: 'status', type: 'varchar', length: 30, nullable: false })
+  status: string;
 
-  @ManyToMany(() => Usuario, (usuario) => usuario.interesses)
-  usuarios: Usuario[];
+  @Column({ name: 'motivo', type: 'varchar', length: 255, nullable: false })
+  motivo: string;
 
-  @ManyToMany(() => Projeto, (projeto) => projeto.interesses)
-  projetos: Projeto[];
+  @OneToMany(() => Usuario, (usuario) => usuario.interesses)
+  @JoinColumn({ name: 'id_usuario', referencedColumnName: 'id' })
+  usuario: Usuario;
+
+  @OneToMany(() => Projeto, (projeto) => projeto.interesses)
+  @JoinColumn({ name: 'id_projeto', referencedColumnName: 'id' })
+  projeto: Projeto;
 }

@@ -1,51 +1,65 @@
 import { HistoricoDoacao } from 'src/historico_doacao/entities/historico_doacao.entity';
 import { Interesse } from 'src/interesse/entities/interesse.entity';
-import { Noticia } from 'src/noticia/entities/noticia.entity';
+import { Divulgacao } from 'src/divulgacao/entities/divulgacao.entity';
 import { Projeto } from 'src/projeto/entities/projeto.entity';
 import {
   Column,
-  JoinTable,
-  ManyToMany,
+  Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UsuarioAssunto } from '../../usuario-assunto/entities/usuario-assunto.entity';
 
+@Entity()
 export class Usuario {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ name: 'email', type: 'string', nullable: false })
+  @Column({ unique: true, name: 'email', type: 'varchar', nullable: false })
   email: string;
 
-  @Column({ name: 'nome_completo', type: 'string', nullable: false })
-  nome_completo: string;
+  @Column({ name: 'senha', type: 'varchar', nullable: false })
+  senha: string;
 
-  @Column({ name: 'cpf', type: 'int', nullable: false, length: 11 })
-  cpf: number;
+  @Column({ name: 'nome_completo', type: 'varchar', nullable: false })
+  nomeCompleto: string;
 
-  @Column({ name: 'tipo', type: 'string', nullable: false })
-  tipo: string;
+  @Column({
+    unique: true,
+    name: 'cpf',
+    type: 'char',
+    nullable: false,
+    length: 11,
+  })
+  cpf: string;
 
-  @Column({ name: 'telefone', type: 'string', nullable: false, length: 9 })
-  telefone: number;
+  @Column({ name: 'papel', type: 'varchar', nullable: false, length: 30 })
+  papel: string;
 
-  @Column({ name: 'documento', type: 'int', nullable: false })
-  documento: number;
+  @Column({ name: 'telefone', type: 'char', nullable: false, length: 9 })
+  telefone: string;
 
-  @Column({ name: 'pFisica', type: 'boolean', nullable: false })
-  pFisica: boolean;
+  @Column({
+    name: 'curriculo',
+    type: 'varchar',
+    nullable: false,
+    length: 1024,
+  })
+  curriculo: string;
 
-  @OneToMany(() => Noticia, (noticia) => noticia.usuario)
-  noticias: Noticia[];
+  @OneToMany(() => Projeto, (projeto) => projeto.responsavel)
+  projetos: Projeto[];
+
+  @ManyToOne(() => Interesse, (interesse) => interesse.usuario)
+  interesses: Interesse[];
+
+  @OneToMany(() => Divulgacao, (divulgacao) => divulgacao.usuario)
+  divulgacoes: Divulgacao[];
 
   @OneToMany(() => HistoricoDoacao, (doacao) => doacao.usuario)
   doacoes: HistoricoDoacao[];
 
-  @ManyToMany(() => Projeto, (projeto) => projeto.usuarios)
-  @JoinTable()
-  projetos: Projeto[];
-
-  @ManyToMany(() => Interesse, (interesse) => interesse.usuarios)
-  @JoinTable()
-  interesses: Interesse[];
+  @OneToMany(() => UsuarioAssunto, (userAssunto) => userAssunto.usuario)
+  assuntos: UsuarioAssunto[];
 }

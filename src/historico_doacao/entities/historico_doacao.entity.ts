@@ -1,20 +1,34 @@
-import { Projeto } from 'src/projeto/entities/projeto.entity';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
-import { Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Doacao } from '../../doacao/entities/doacao.entity';
 
+@Entity()
 export class HistoricoDoacao {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ name: 'id_transacao', type: 'string', nullable: false })
-  id_transacao: string;
+  @Column({ name: 'transacao', type: 'varchar', nullable: false })
+  transacao: string;
 
-  @Column({ name: 'valor', type: 'float', nullable: false })
-  valor: number;
+  @Column({
+    name: 'data_transacao',
+    type: 'varchar',
+    length: 60,
+    nullable: false,
+  })
+  dataTransacao: number;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.doacoes)
+  @ManyToOne(() => Usuario, (usuario) => usuario)
+  @JoinColumn({ name: 'id_usuario', referencedColumnName: 'id' })
   usuario: Usuario;
 
-  @ManyToOne(() => Projeto, (projeto) => projeto.doacoes)
-  projeto: Projeto;
+  @ManyToOne(() => Doacao, (doacao) => doacao.doacoes)
+  @JoinColumn({ name: 'id_doacao', referencedColumnName: 'id' })
+  doacao: Doacao;
 }

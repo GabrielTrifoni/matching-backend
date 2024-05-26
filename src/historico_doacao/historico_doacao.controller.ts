@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { HistoricoDoacaoService } from './historico_doacao.service';
 import { CreateHistoricoDoacaoDto } from './dto/create-historico_doacao.dto';
 import { UpdateHistoricoDoacaoDto } from './dto/update-historico_doacao.dto';
 
 @Controller('historico-doacao')
 export class HistoricoDoacaoController {
-  constructor(private readonly historicoDoacaoService: HistoricoDoacaoService) {}
+  constructor(
+    private readonly historicoDoacaoService: HistoricoDoacaoService,
+  ) {}
 
   @Post()
   create(@Body() createHistoricoDoacaoDto: CreateHistoricoDoacaoDto) {
@@ -23,7 +33,10 @@ export class HistoricoDoacaoController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHistoricoDoacaoDto: UpdateHistoricoDoacaoDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateHistoricoDoacaoDto: UpdateHistoricoDoacaoDto,
+  ) {
     return this.historicoDoacaoService.update(+id, updateHistoricoDoacaoDto);
   }
 

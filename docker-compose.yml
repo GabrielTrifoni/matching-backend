@@ -1,19 +1,24 @@
-version: '3.8'
+version: '3.9'
 services:
-  postgres:
-    container_name: projetocomputacao
+  matching:
     image: postgres:latest
     restart: always
     environment:
-      - POSTGRES_USER:postgres
-      - POSTGRES_PASSWORD:postgres
-      - POSTGRES_DB:projetoDB
+      - POSTGRES_USER=matching
+      - POSTGRES_PASSWORD=matching
+      - POSTGRES_DB=matching
     ports:
-      - 5441:5432
-    env_file:
-      - .env
+      - "5432:5432"
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - matchingData:/var/lib/postgresql/data
+    networks:
+      - my-network
+    container_name: matchingDb
 
 volumes:
-  postgres:
+  matchingData:
+    driver: local
+
+networks:
+  my-network:
+    driver: bridge
