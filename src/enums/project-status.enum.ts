@@ -1,0 +1,5 @@
+export enum ProjectStatus {
+  UNDER_ANALYSIS = 'EM_ANALISE',
+  IN_PROGRESS = 'EM_ANDAMENTO',
+  CONCLUDED = 'CONCLUIDO',
+}

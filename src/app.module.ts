@@ -3,13 +3,15 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsuarioModule } from './usuario/usuario.module';
-import { DivulgacaoModule } from './divulgacao/divulgacao.module';
-import { HistoricoDoacaoModule } from './historico_doacao/historico_doacao.module';
-import { ProjetoModule } from './projeto/projeto.module';
-import { InteresseModule } from './interesse/interesse.module';
-import { UsuarioAssuntoModule } from './usuario-assunto/usuario-assunto.module';
-import { ProjetoAssuntoModule } from './projeto-assunto/projeto-assunto.module';
+import { UserModule } from './user/user.module';
+import { NewsModule } from './news/news.module';
+import { DonationHistoryModule } from './donation-history/donation-history.module';
+import { ProjectModule } from './project/project.module';
+import { InterestModule } from './interest/interest.module';
+import { UserSubjectModule } from './user-subject/user-subject.module';
+import { ProjectSubjectModule } from './project-subject/project-subject.module';
+import { AuthModule } from './auth/auth.module';
+import { SubjectModule } from './subject/subject.module';
 
 @Module({
   imports: [
@@ -24,13 +26,15 @@ import { ProjetoAssuntoModule } from './projeto-assunto/projeto-assunto.module';
       synchronize: true,
       autoLoadEntities: true,
     }),
-    UsuarioModule,
-    DivulgacaoModule,
-    HistoricoDoacaoModule,
-    ProjetoModule,
-    InteresseModule,
-    UsuarioAssuntoModule,
-    ProjetoAssuntoModule,
+    AuthModule,
+    UserModule,
+    NewsModule,
+    SubjectModule,
+    DonationHistoryModule,
+    ProjectModule,
+    InterestModule,
+    UserSubjectModule,
+    ProjectSubjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],

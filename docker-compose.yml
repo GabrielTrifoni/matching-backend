@@ -13,7 +13,7 @@ services:
       - matchingData:/var/lib/postgresql/data
     networks:
       - my-network
-    container_name: matchingDb
+    container_name: matching-db
 
 volumes:
   matchingData:
