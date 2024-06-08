@@ -7,9 +7,10 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserRole } from 'src/enums/role.enum';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -59,11 +60,45 @@ export class UserService {
   //   const subjects = await this.subjectService.findByIds(subjectIds);
   // }
 
-  update(id: number) {
-    return `This action updates a #${id} User`;
+  async update(id: number, dto: UpdateUserDto) {
+    const user = await this.userRepository.findOne({ where: { id: id } });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const bio = dto.bio ? dto.bio : user.bio;
+    const cpf = dto.cpf ? dto.cpf : user.cpf;
+    const password = dto.password
+      ? await bcrypt.hash(dto.password, this.saltRounds)
+      : user.password;
+    const fullname = dto.fullname ? dto.fullname : user.fullname;
+    const phone = dto.phone ? dto.phone : user.phone;
+    const email = dto.email ? dto.email : user.email;
+
+    const updatedUser = {
+      id: user.id,
+      cpf,
+      email,
+      password,
+      fullname,
+      phone,
+      bio,
+      role: user.role,
+    } as DeepPartial<User>;
+
+    await this.delete(id);
+
+    await this.userRepository.save(updatedUser);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} User`;
+  async delete(id: number) {
+    const user = await this.userRepository.findOne({ where: { id: id } });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    await this.userRepository.remove(user);
   }
 }
