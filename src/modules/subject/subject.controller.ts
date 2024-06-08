@@ -14,6 +14,8 @@ import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from 'src/enums/role.enum';
+import { MyResponse } from 'src/decorators/pagination.decorator';
+import { Subject } from '@entities/subject.entity';
 
 @Controller('subjects')
 export class SubjectController {
@@ -32,13 +34,13 @@ export class SubjectController {
   }
 
   @Get()
-  findAll() {
-    const subjects = this.subjectService.findAll();
+  async findAll(): Promise<MyResponse<Subject[]>> {
+    const subjects = await this.subjectService.findAll();
 
     return {
       status: HttpStatus.OK,
       message: 'Assuntos obtidos com sucesso',
-      subjects: subjects,
+      payload: subjects,
     };
   }
 
