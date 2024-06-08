@@ -11,5 +11,5 @@ export class CreateNewsDto {
   })
   description: string;
 
-  attachments?: string[];
+  attachments?: string;
 }
