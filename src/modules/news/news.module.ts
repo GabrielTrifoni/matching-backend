@@ -7,9 +7,14 @@ import { User } from 'src/entities/user.entity';
 import { RoleGuard } from 'src/guards/role.guard';
 import { SharedModule } from 'src/shared/shared.module';
 import { UserService } from '@modules/user/user.service';
+import { Subject } from '@entities/subject.entity';
+import { UserSubject } from '@entities/user-subject.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([News, User]), SharedModule],
+  imports: [
+    TypeOrmModule.forFeature([News, User, Subject, UserSubject]),
+    SharedModule,
+  ],
   controllers: [NewsController],
   providers: [NewsService, UserService, RoleGuard],
 })

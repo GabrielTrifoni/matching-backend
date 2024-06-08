@@ -7,18 +7,23 @@ import { Project } from 'src/entities/project.entity';
 import { Interest } from 'src/entities/interest.entity';
 import { UserSubject } from 'src/entities/user-subject.entity';
 import { DonationHistory } from 'src/entities/donation-history.entity';
+import { Subject } from '@entities/subject.entity';
+import { RoleGuard } from 'src/guards/role.guard';
+import { SharedModule } from 'src/shared/shared.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       User,
+      UserSubject,
+      Subject,
       Project,
       Interest,
-      UserSubject,
       DonationHistory,
     ]),
+    SharedModule,
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, RoleGuard],
 })
 export class UserModule {}
