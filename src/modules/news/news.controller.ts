@@ -48,6 +48,8 @@ export class NewsController {
   }
 
   @Get()
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
   async findAll(
     @PaginationParams() params: Pagination,
   ): Promise<MyResponse<Paginated<News>>> {
@@ -61,6 +63,8 @@ export class NewsController {
   }
 
   @Get(':id')
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
   async findOne(@Param('id') id: string): Promise<MyResponse<News>> {
     const news = await this.newsService.findOne(+id);
 
@@ -72,6 +76,8 @@ export class NewsController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
   async update(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
     await this.newsService.update(+id, updateNewsDto);
 

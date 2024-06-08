@@ -20,9 +20,7 @@ export class SubjectService {
   }
 
   async findAll() {
-    const subjects = await this.subjectRepository.find({
-      relations: ['projectSubject'],
-    });
+    const subjects = await this.subjectRepository.find();
 
     return subjects ?? [];
   }

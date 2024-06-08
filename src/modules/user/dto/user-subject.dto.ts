@@ -1,10 +1,10 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
-export class AssociateWithSubjectDto {
+export class UserWithSubjectDto {
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
   @IsNotEmpty()
-  subjectIds: number[];
+  subjects: number[];
 }
