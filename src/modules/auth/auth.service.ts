@@ -5,7 +5,13 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '@modules/user/user.service';
+import { UserRole } from 'src/enums/role.enum';
+
+export interface IAuthUser {
+  email: string;
+  role: UserRole;
+}
 
 @Injectable()
 export class AuthService {
@@ -18,11 +24,7 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    console.log(email, password);
-
     const user = await this.userService.findOne(email);
-
-    console.log(user);
 
     if (!user) {
       throw new NotFoundException('O usuário não foi encontrado.');

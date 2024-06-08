@@ -4,8 +4,8 @@ import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Subject } from 'src/entities/subject.entity';
-import { Roles } from 'src/decorator/roles.decorator';
-import { UserRoles } from 'src/enums/role.enum';
+import { Roles } from 'src/decorators/roles.decorator';
+import { UserRole } from 'src/enums/role.enum';
 
 @Injectable()
 export class SubjectService {
@@ -14,7 +14,7 @@ export class SubjectService {
     private readonly subjectRepository: Repository<Subject>,
   ) {}
 
-  @Roles(UserRoles.SYSTEM_ADMIN)
+  @Roles(UserRole.SYSTEM_ADMIN)
   async create(newSubject: CreateSubjectDto) {
     await this.subjectRepository.save(newSubject);
   }

@@ -7,7 +7,6 @@ import { Project } from 'src/entities/project.entity';
 import { Interest } from 'src/entities/interest.entity';
 import { UserSubject } from 'src/entities/user-subject.entity';
 import { DonationHistory } from 'src/entities/donation-history.entity';
-import { SubjectService } from 'src/subject/subject.service';
 
 @Module({
   imports: [

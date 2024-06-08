@@ -2,16 +2,17 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
-import { NewsModule } from './news/news.module';
-import { DonationHistoryModule } from './donation-history/donation-history.module';
-import { ProjectModule } from './project/project.module';
-import { InterestModule } from './interest/interest.module';
-import { UserSubjectModule } from './user-subject/user-subject.module';
-import { ProjectSubjectModule } from './project-subject/project-subject.module';
-import { AuthModule } from './auth/auth.module';
-import { SubjectModule } from './subject/subject.module';
+import { UserModule } from './modules/user/user.module';
+import { NewsModule } from './modules/news/news.module';
+import { DonationHistoryModule } from './modules/donation-history/donation-history.module';
+import { ProjectModule } from './modules/project/project.module';
+import { InterestModule } from './modules/interest/interest.module';
+import { UserSubjectModule } from './modules/user-subject/user-subject.module';
+import { ProjectSubjectModule } from './modules/project-subject/project-subject.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { SubjectModule } from './modules/subject/subject.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
     AuthModule,
+    SharedModule,
     UserModule,
     NewsModule,
     SubjectModule,

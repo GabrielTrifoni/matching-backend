@@ -16,5 +16,9 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
+    "paths": {
+      "@modules/*": ["src/modules/*"],
+      "@entities/*": ["src/entities/*"],
+    }
   }
 }

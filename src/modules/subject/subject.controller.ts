@@ -12,15 +12,15 @@ import { SubjectService } from './subject.service';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
-import { Roles } from 'src/decorator/roles.decorator';
-import { UserRoles } from 'src/enums/role.enum';
+import { Roles } from 'src/decorators/roles.decorator';
+import { UserRole } from 'src/enums/role.enum';
 
 @Controller('subjects')
 export class SubjectController {
   constructor(private readonly subjectService: SubjectService) {}
 
   @Post()
-  @Roles(UserRoles.SYSTEM_ADMIN)
+  @Roles(UserRole.SYSTEM_ADMIN)
   @UseFilters(new HttpExceptionFilter())
   async create(@Body() dto: CreateSubjectDto) {
     await this.subjectService.create(dto);

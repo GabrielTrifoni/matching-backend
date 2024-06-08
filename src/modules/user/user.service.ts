@@ -5,13 +5,11 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
-import { User } from '../entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserRoles } from 'src/enums/role.enum';
-import { SubjectService } from 'src/subject/subject.service';
-import { AssociateWithSubjectDto } from './dto/associate-subject.dto';
+import { UserRole } from 'src/enums/role.enum';
 
 @Injectable()
 export class UserService {
@@ -35,7 +33,7 @@ export class UserService {
 
     await this.userRepository.save({
       ...newUser,
-      role: UserRoles.STUDENT,
+      role: UserRole.STUDENT,
     });
   }
 

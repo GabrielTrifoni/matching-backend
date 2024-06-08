@@ -3,9 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   HttpStatus,
   UseFilters,
 } from '@nestjs/common';
@@ -13,8 +11,6 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
-import { InterestService } from 'src/interest/interest.service';
-import { AssociateWithSubjectDto } from './dto/associate-subject.dto';
 
 @Controller('users')
 export class UserController {
@@ -29,12 +25,6 @@ export class UserController {
       status: HttpStatus.CREATED,
       message: 'Usuário criado com sucesso',
     };
-  }
-
-  @Post('/interests')
-  @UseFilters(new HttpExceptionFilter())
-  async associateWithSubject(@Body() subjects: AssociateWithSubjectDto) {
-    // await this.userService.associate();
   }
 
   @Get()

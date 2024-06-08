@@ -1,4 +1,4 @@
-export enum UserRoles {
+export enum UserRole {
   STUDENT = 'ESTUDANTE',
   PROJECT_ADMIN = 'ADMIN_PROJETO',
   SYSTEM_ADMIN = 'ADMIN_SISTEMA',

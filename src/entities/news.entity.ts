@@ -23,14 +23,14 @@ export class News {
     type: 'timestamp',
     nullable: false,
   })
-  writtenDate: Date = new Date();
+  writtenDate: Date;
 
   @Column({
     name: 'modified_date',
     type: 'timestamp',
     nullable: false,
   })
-  modifiedDate: Date = new Date();
+  modifiedDate: Date;
 
   @Column({ name: 'attachments', type: 'varchar', length: 512, nullable: true })
   attachments: string;

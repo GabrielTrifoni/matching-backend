@@ -4,7 +4,7 @@ import { Interest } from './interest.entity';
 import { News } from './news.entity';
 import { DonationHistory } from './donation-history.entity';
 import { UserSubject } from './user-subject.entity';
-import { UserRoles } from 'src/enums/role.enum';
+import { UserRole } from 'src/enums/role.enum';
 
 @Entity()
 export class User {
@@ -30,7 +30,7 @@ export class User {
   cpf: string;
 
   @Column({ name: 'role', type: 'varchar', nullable: false, length: 30 })
-  role: UserRoles;
+  role: UserRole;
 
   @Column({ name: 'phone', type: 'char', nullable: false, length: 9 })
   phone: string;
