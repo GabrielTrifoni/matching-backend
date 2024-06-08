@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { News } from 'src/entities/news.entity';
-import { Repository } from 'typeorm';
-import { IAuthUser } from '@modules/auth/auth.service';
+import { DeepPartial, Repository } from 'typeorm';
 import { UserService } from '@modules/user/user.service';
+import { Paginated, Pagination } from 'src/decorators/pagination.decorator';
 
 @Injectable()
 export class NewsService {
@@ -29,15 +29,52 @@ export class NewsService {
     });
   }
 
-  findAll() {
-    return `This action returns all News`;
+  async findAll(pagination: Pagination): Promise<Paginated<News>> {
+    const { page, limit, size, offset } = pagination;
+
+    const [news, total] = await this.newsRepository.findAndCount({
+      take: limit,
+      skip: offset,
+      order: {
+        writtenDate: 'DESC',
+      },
+    });
+
+    return { total, items: news, page, size };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} News`;
+  async findOne(id: number) {
+    const news = await this.newsRepository.findOne({
+      where: { id },
+      select: {
+        user: {
+          email: true,
+          fullname: true,
+        },
+      },
+      relations: ['user'],
+    });
+
+    if (!news) {
+      throw new NotFoundException('Divulgação não encontrada.');
+    }
+
+    return news;
   }
 
-  update(id: number, updateNewsDto: UpdateNewsDto) {
-    return `This action updates a #${id} News`;
+  async update(id: number, dto: UpdateNewsDto) {
+    const news = await this.newsRepository.findOne({ where: { id } });
+
+    if (!news) {
+      throw new NotFoundException('Divulgação não encontrada');
+    }
+
+    const updatedNews = {
+      id,
+      ...dto,
+      modifiedDate: new Date(),
+    } as DeepPartial<News>;
+
+    await this.newsRepository.save(updatedNews);
   }
 }

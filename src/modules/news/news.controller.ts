@@ -19,6 +19,13 @@ import { UserRole } from 'src/enums/role.enum';
 import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
 import { AuthUser } from 'src/decorators/user.decorator';
 import { IAuthUser } from '@modules/auth/auth.service';
+import {
+  MyResponse,
+  Paginated,
+  Pagination,
+  PaginationParams,
+} from 'src/decorators/pagination.decorator';
+import { News } from '@entities/news.entity';
 
 @Controller('news')
 export class NewsController {
@@ -31,7 +38,7 @@ export class NewsController {
   async create(
     @Body() createNewsDto: CreateNewsDto,
     @AuthUser() user: IAuthUser,
-  ) {
+  ): Promise<MyResponse<void>> {
     await this.newsService.create(createNewsDto, user.email);
 
     return {
@@ -41,17 +48,36 @@ export class NewsController {
   }
 
   @Get()
-  findAll() {
-    return this.newsService.findAll();
+  async findAll(
+    @PaginationParams() params: Pagination,
+  ): Promise<MyResponse<Paginated<News>>> {
+    const news = await this.newsService.findAll(params);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Divulgações obtidas com sucesso.',
+      payload: news,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.newsService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<MyResponse<News>> {
+    const news = await this.newsService.findOne(+id);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Divulgação obtida com sucesso.',
+      payload: news,
+    };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
-    return this.newsService.update(+id, updateNewsDto);
+  async update(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
+    await this.newsService.update(+id, updateNewsDto);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Divulgação atualizada com sucesso.',
+    };
   }
 }
