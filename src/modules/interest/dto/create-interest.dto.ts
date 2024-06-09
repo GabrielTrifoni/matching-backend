@@ -1,1 +1,3 @@
-export class CreateInterestDto {}
+export class CreateInterestDto {
+  reason: string;
+}

@@ -6,10 +6,18 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
 } from '@nestjs/common';
 import { InterestService } from './interest.service';
 import { CreateInterestDto } from './dto/create-interest.dto';
 import { UpdateInterestDto } from './dto/update-interest.dto';
+import {
+  MyResponse,
+  Paginated,
+  Pagination,
+  PaginationParams,
+} from 'src/decorators/pagination.decorator';
+import { Interest } from '@entities/interest.entity';
 
 @Controller('interests')
 export class InterestController {
@@ -17,17 +25,36 @@ export class InterestController {
 
   @Post()
   create(@Body() createInterestDto: CreateInterestDto) {
-    return this.interestService.create(createInterestDto);
+    this.interestService.create(createInterestDto);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'O interesse foi criado com sucesso.',
+    };
   }
 
   @Get()
-  findAll() {
-    return this.interestService.findAll();
+  async findAll(
+    @PaginationParams() params: Pagination,
+  ): Promise<MyResponse<Paginated<Interest>>> {
+    const interests = await this.interestService.findAll(params);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Interesses obtidos com sucesso.',
+      payload: interests,
+    };
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.interestService.findOne(+id);
+    const interest = this.interestService.findOne(+id);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Interesse obtido com sucesso.',
+      payload: interest,
+    };
   }
 
   @Patch(':id')

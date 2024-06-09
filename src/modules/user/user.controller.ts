@@ -28,7 +28,7 @@ export class UserController {
 
   @Post()
   @UseFilters(new HttpExceptionFilter())
-  async create(@Body() dto: CreateUserDto) {
+  async create(@Body() dto: CreateUserDto): Promise<MyResponse<void>> {
     await this.userService.create(dto);
 
     return {
