@@ -3,8 +3,7 @@ import { CreateInterestDto } from './dto/create-interest.dto';
 import { UpdateInterestDto } from './dto/update-interest.dto';
 import { Repository } from 'typeorm';
 import { Interest } from '@entities/interest.entity';
-import { UserService } from '@modules/user/user.service';
-import { ProjectService } from '@modules/project/project.service';
+// import { UserService } from '@modules/user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated, Pagination } from 'src/decorators/pagination.decorator';
 
@@ -13,8 +12,8 @@ export class InterestService {
   constructor(
     @InjectRepository(Interest)
     private readonly interestRepository: Repository<Interest>,
-    private readonly userService: UserService,
-    private readonly projetoService: ProjectService,
+    // private readonly userService: UserService,
+    // private readonly projetoService: ProjectService,
   ) {}
 
   @Post()
