@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { InterestService } from './interest.service';
 import { CreateInterestDto } from './dto/create-interest.dto';
@@ -18,14 +20,27 @@ import {
   PaginationParams,
 } from 'src/decorators/pagination.decorator';
 import { Interest } from '@entities/interest.entity';
+import { AuthUser } from 'src/decorators/user.decorator';
+import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RoleGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { UserRole } from 'src/enums/role.enum';
+import { IAuthUser } from '@modules/auth/auth.service';
 
 @Controller('interests')
 export class InterestController {
   constructor(private readonly interestService: InterestService) {}
 
   @Post()
-  create(@Body() createInterestDto: CreateInterestDto) {
-    this.interestService.create(createInterestDto);
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
+  @UseFilters(new HttpExceptionFilter())
+  create(
+    @Body() createInterestDto: CreateInterestDto,
+    @AuthUser() user: IAuthUser,
+  ) {
+    this.interestService.create(createInterestDto, user);
 
     return {
       status: HttpStatus.OK,

@@ -121,7 +121,7 @@ export class UserService {
     }
 
     await this.userSubjectRepository.delete({
-      user: user,
+      user,
       subject: In(dto.subjects),
     });
   }

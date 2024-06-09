@@ -1,29 +1,37 @@
 import { Injectable, NotFoundException, Post } from '@nestjs/common';
 import { CreateInterestDto } from './dto/create-interest.dto';
 import { UpdateInterestDto } from './dto/update-interest.dto';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { Interest } from '@entities/interest.entity';
-// import { UserService } from '@modules/user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated, Pagination } from 'src/decorators/pagination.decorator';
+import { InterestStatus } from 'src/enums/interest-status.enum';
+import { UserService } from '@modules/user/user.service';
+import { ProjectService } from '@modules/project/project.service';
+import { IAuthUser } from '@modules/auth/auth.service';
 
 @Injectable()
 export class InterestService {
   constructor(
     @InjectRepository(Interest)
     private readonly interestRepository: Repository<Interest>,
-    // private readonly userService: UserService,
-    // private readonly projetoService: ProjectService,
+    private readonly userService: UserService,
+    private readonly projectService: ProjectService,
   ) {}
 
   @Post()
-  async create(createInterestDto: CreateInterestDto) {
-    const { reason } = createInterestDto;
+  async create(createInterestDto: CreateInterestDto, { email }: IAuthUser) {
+    const { project: id, reason } = createInterestDto;
+
+    const user = await this.userService.findOne(email);
+    const project = await this.projectService.findOne(id);
 
     await this.interestRepository.save({
       reason: reason,
-      status: 'ativo',
-    });
+      status: InterestStatus.UNDER_ANALYSIS,
+      user,
+      project,
+    } as DeepPartial<Interest>);
   }
 
   async findAll(pagination: Pagination): Promise<Paginated<Interest>> {

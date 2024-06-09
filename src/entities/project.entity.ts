@@ -54,8 +54,8 @@ export class Project {
   status: ProjectStatus;
 
   @ManyToOne(() => User, (user) => user.projects)
-  @JoinColumn({ name: 'admin', referencedColumnName: 'id' })
-  admin: User;
+  @JoinColumn({ name: 'supervisor', referencedColumnName: 'id' })
+  supervisor: User;
 
   @OneToOne(() => Donation, (donation) => donation.project, { nullable: true })
   donation: Donation;

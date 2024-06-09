@@ -1,0 +1,5 @@
+export enum InterestStatus {
+  UNDER_ANALYSIS = 'EM_ANALISE',
+  APPROVED = 'APROVADO',
+  DISAPPROVED = 'DESAPROVADO',
+}

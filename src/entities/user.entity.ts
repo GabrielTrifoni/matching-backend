@@ -43,7 +43,7 @@ export class User {
   })
   bio: string;
 
-  @OneToMany(() => Project, (project) => project.admin)
+  @OneToMany(() => Project, (project) => project.supervisor)
   projects: Project[];
 
   @OneToMany(() => Interest, (interest) => interest.user)
