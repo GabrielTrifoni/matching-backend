@@ -6,14 +6,13 @@ import {
   Body,
   Param,
   HttpStatus,
-  UseFilters,
   Delete,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
+
 import { UserWithSubjectDto } from './dto/user-subject.dto';
 import { MyResponse } from 'src/decorators/pagination.decorator';
 import { User } from '@entities/user.entity';
@@ -27,7 +26,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @UseFilters(new HttpExceptionFilter())
   async create(@Body() dto: CreateUserDto): Promise<MyResponse<void>> {
     await this.userService.create(dto);
 
@@ -51,7 +49,6 @@ export class UserController {
   @Post('/subjects')
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.STUDENT)
-  @UseFilters(new HttpExceptionFilter())
   async associate(@Body() dto: UserWithSubjectDto): Promise<MyResponse<void>> {
     await this.userService.associateWithSubject(dto);
 
@@ -64,7 +61,6 @@ export class UserController {
   @Delete('/subjects')
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.STUDENT)
-  @UseFilters(new HttpExceptionFilter())
   async dissociate(@Body() dto: UserWithSubjectDto): Promise<MyResponse<void>> {
     await this.userService.dissociateWithSubject(dto);
 

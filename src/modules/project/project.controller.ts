@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  UseFilters,
   HttpStatus,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
@@ -18,7 +17,7 @@ import { Project } from '@entities/project.entity';
 import { Roles } from 'src/decorators/roles.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
-import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
+
 import { AuthUser } from 'src/decorators/user.decorator';
 import { IAuthUser } from '@modules/auth/auth.service';
 import { UserRole } from 'src/enums/role.enum';
@@ -30,7 +29,6 @@ export class ProjectController {
   @Post()
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  @UseFilters(new HttpExceptionFilter())
   async create(
     @Body() dto: CreateProjectDto,
     @AuthUser() user: IAuthUser,

@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, Post } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common';
 import { CreateInterestDto } from './dto/create-interest.dto';
 import { UpdateInterestDto } from './dto/update-interest.dto';
 import { DeepPartial, Repository } from 'typeorm';
@@ -9,6 +15,7 @@ import { InterestStatus } from 'src/enums/interest-status.enum';
 import { UserService } from '@modules/user/user.service';
 import { ProjectService } from '@modules/project/project.service';
 import { IAuthUser } from '@modules/auth/auth.service';
+import { UpdateInterestStatusDto } from './dto/update-interest-status.dto';
 
 @Injectable()
 export class InterestService {
@@ -16,22 +23,34 @@ export class InterestService {
     @InjectRepository(Interest)
     private readonly interestRepository: Repository<Interest>,
     private readonly userService: UserService,
+    @Inject(forwardRef(() => ProjectService))
     private readonly projectService: ProjectService,
   ) {}
 
-  @Post()
   async create(createInterestDto: CreateInterestDto, { email }: IAuthUser) {
     const { project: id, reason } = createInterestDto;
 
     const user = await this.userService.findOne(email);
     const project = await this.projectService.findOne(id);
 
-    await this.interestRepository.save({
-      reason: reason,
+    const interest = this.interestRepository.findOne({
+      where: { user, project },
+    });
+
+    if (interest) {
+      throw new ConflictException('O interesse já foi criado');
+    }
+
+    const newInterest = {
+      reason,
       status: InterestStatus.UNDER_ANALYSIS,
       user,
       project,
-    } as DeepPartial<Interest>);
+    } as DeepPartial<Interest>;
+
+    console.log(newInterest);
+
+    await this.interestRepository.save(newInterest);
   }
 
   async findAll(pagination: Pagination): Promise<Paginated<Interest>> {
@@ -48,7 +67,7 @@ export class InterestService {
     return { total, items: interests, page, size };
   }
 
-  async findOne(id: number): Promise<Interest | NotFoundException> {
+  async findOne(id: number) {
     const interest = await this.interestRepository.findOne({
       where: {
         id: id,
@@ -56,14 +75,36 @@ export class InterestService {
     });
 
     if (!interest) {
-      return new NotFoundException('Interesse não encontrado.');
+      throw new NotFoundException('Interesse não encontrado.');
     }
 
     return interest;
   }
 
-  update(id: number, updateInterestDto: UpdateInterestDto) {
-    return `This action updates a #${id} interesse`;
+  async update(id: number, dto: UpdateInterestDto) {
+    const interest = await this.findOne(id);
+
+    const updatedInterest = {
+      ...interest,
+      ...dto,
+    } as DeepPartial<Interest>;
+
+    await this.interestRepository.save(updatedInterest);
+  }
+
+  async updateStatus(id: number, { status }: UpdateInterestStatusDto) {
+    const interest = await this.findOne(id);
+
+    if (interest.status === 'APROVADO' || interest.status === 'REPROVADO') {
+      throw new ConflictException('O status do interesse já foi atualizado');
+    }
+
+    const updatedInterestStatus = {
+      ...interest,
+      status,
+    } as DeepPartial<Interest>;
+
+    await this.interestRepository.save(updatedInterestStatus);
   }
 
   remove(id: number) {

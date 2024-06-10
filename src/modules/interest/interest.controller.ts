@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   HttpStatus,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { InterestService } from './interest.service';
@@ -21,12 +20,12 @@ import {
 } from 'src/decorators/pagination.decorator';
 import { Interest } from '@entities/interest.entity';
 import { AuthUser } from 'src/decorators/user.decorator';
-import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from 'src/enums/role.enum';
 import { IAuthUser } from '@modules/auth/auth.service';
+import { UpdateInterestStatusDto } from './dto/update-interest-status.dto';
 
 @Controller('interests')
 export class InterestController {
@@ -35,7 +34,6 @@ export class InterestController {
   @Post()
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  @UseFilters(new HttpExceptionFilter())
   create(
     @Body() createInterestDto: CreateInterestDto,
     @AuthUser() user: IAuthUser,
@@ -49,6 +47,8 @@ export class InterestController {
   }
 
   @Get()
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
   async findAll(
     @PaginationParams() params: Pagination,
   ): Promise<MyResponse<Paginated<Interest>>> {
@@ -62,6 +62,8 @@ export class InterestController {
   }
 
   @Get(':id')
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
   findOne(@Param('id') id: string) {
     const interest = this.interestService.findOne(+id);
 
@@ -73,11 +75,33 @@ export class InterestController {
   }
 
   @Patch(':id')
-  update(
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
+  async update(
     @Param('id') id: string,
-    @Body() updateInterestDto: UpdateInterestDto,
-  ) {
-    return this.interestService.update(+id, updateInterestDto);
+    @Body() dto: UpdateInterestDto,
+  ): Promise<MyResponse<void>> {
+    await this.interestService.update(+id, dto);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Interesse atualizado com sucesso.',
+    };
+  }
+
+  @Patch(':id/updateStatus')
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateInterestStatusDto,
+  ): Promise<MyResponse<void>> {
+    await this.interestService.updateStatus(+id, dto);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Interesse atualizado com sucesso.',
+    };
   }
 
   @Delete(':id')

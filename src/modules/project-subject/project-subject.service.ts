@@ -2,8 +2,10 @@ import { ProjectSubject } from '@entities/project-subject.entity';
 import { Subject } from '@entities/subject.entity';
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, In, Repository } from 'typeorm';
@@ -13,6 +15,7 @@ import { ProjectService } from '@modules/project/project.service';
 @Injectable()
 export class ProjectSubjectService {
   constructor(
+    @Inject(forwardRef(() => ProjectService))
     private readonly projectService: ProjectService,
     @InjectRepository(Subject)
     private readonly subjectRepository: Repository<Subject>,

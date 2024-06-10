@@ -60,7 +60,7 @@ export class Project {
   @OneToOne(() => Donation, (donation) => donation.project, { nullable: true })
   donation: Donation;
 
-  @ManyToOne(() => Interest, (interest) => interest.project)
+  @OneToMany(() => Interest, (interest) => interest.project)
   interests: Interest[];
 
   @OneToMany(() => ProjectSubject, (projectSubject) => projectSubject.project)
