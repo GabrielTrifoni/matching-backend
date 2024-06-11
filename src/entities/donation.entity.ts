@@ -15,7 +15,7 @@ export class Donation {
   id: number;
 
   @Column({ name: 'donated', type: 'decimal', nullable: false })
-  donated: number = 0;
+  donated: number;
 
   @Column({ name: 'expected', type: 'decimal', nullable: false })
   expected: number;

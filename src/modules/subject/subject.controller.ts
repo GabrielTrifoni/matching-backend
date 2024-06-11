@@ -5,13 +5,12 @@ import {
   Body,
   Param,
   HttpStatus,
-  UseFilters,
   Put,
 } from '@nestjs/common';
 import { SubjectService } from './subject.service';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
-import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
+
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from 'src/enums/role.enum';
 import { MyResponse } from 'src/decorators/pagination.decorator';
@@ -23,7 +22,6 @@ export class SubjectController {
 
   @Post()
   @Roles(UserRole.SYSTEM_ADMIN)
-  @UseFilters(new HttpExceptionFilter())
   async create(@Body() dto: CreateSubjectDto) {
     await this.subjectService.create(dto);
 

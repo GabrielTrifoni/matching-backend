@@ -7,10 +7,9 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, In, Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserRole } from 'src/enums/role.enum';
-import { UserWithSubjectDto } from './dto/user-subject.dto';
 import { Subject } from '@entities/subject.entity';
 import { UserSubject } from '@entities/user-subject.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -77,53 +76,6 @@ export class UserService {
     }
 
     return user;
-  }
-
-  async associateWithSubject(dto: UserWithSubjectDto) {
-    const user = await this.findOne(dto.email);
-
-    const subjects = await this.subjectRepository.findBy({
-      id: In(dto.subjects),
-    });
-
-    if (dto.subjects.length > subjects.length) {
-      throw new NotFoundException('Existem assuntos não correspondentes.');
-    }
-
-    const userSubjects = subjects.map(
-      (subject) =>
-        ({
-          subject,
-          user,
-        }) as DeepPartial<UserSubject>,
-    );
-
-    const userSubject = await this.userSubjectRepository.find({
-      where: { user, subject: In(dto.subjects) },
-    });
-
-    if (userSubject.length > 0) {
-      throw new ConflictException('Associações solicitadas já existem.');
-    }
-
-    await this.userSubjectRepository.save(userSubjects);
-  }
-
-  async dissociateWithSubject(dto: UserWithSubjectDto) {
-    const user = await this.findOne(dto.email);
-
-    const subjects = await this.subjectRepository.findBy({
-      id: In(dto.subjects),
-    });
-
-    if (dto.subjects.length > subjects.length) {
-      throw new NotFoundException('Existem assuntos não correspondentes.');
-    }
-
-    await this.userSubjectRepository.delete({
-      user: user,
-      subject: In(dto.subjects),
-    });
   }
 
   async update(id: number, dto: UpdateUserDto) {

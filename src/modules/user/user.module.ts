@@ -8,8 +8,6 @@ import { Interest } from 'src/entities/interest.entity';
 import { UserSubject } from 'src/entities/user-subject.entity';
 import { DonationHistory } from 'src/entities/donation-history.entity';
 import { Subject } from '@entities/subject.entity';
-import { RoleGuard } from 'src/guards/role.guard';
-import { SharedModule } from 'src/shared/shared.module';
 
 @Module({
   imports: [
@@ -21,9 +19,9 @@ import { SharedModule } from 'src/shared/shared.module';
       Interest,
       DonationHistory,
     ]),
-    SharedModule,
   ],
   controllers: [UserController],
-  providers: [UserService, RoleGuard],
+  providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

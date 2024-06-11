@@ -7,7 +7,6 @@ import {
   Param,
   HttpStatus,
   UseGuards,
-  UseFilters,
 } from '@nestjs/common';
 import { NewsService } from './news.service';
 import { CreateNewsDto } from './dto/create-news.dto';
@@ -16,7 +15,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from 'src/enums/role.enum';
-import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
+
 import { AuthUser } from 'src/decorators/user.decorator';
 import { IAuthUser } from '@modules/auth/auth.service';
 import {
@@ -34,7 +33,6 @@ export class NewsController {
   @Post()
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  @UseFilters(new HttpExceptionFilter())
   async create(
     @Body() createNewsDto: CreateNewsDto,
     @AuthUser() user: IAuthUser,

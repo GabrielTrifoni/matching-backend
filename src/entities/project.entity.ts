@@ -53,14 +53,17 @@ export class Project {
   @Column({ name: 'status', type: 'varchar', nullable: false })
   status: ProjectStatus;
 
-  @ManyToOne(() => User, (user) => user.projects)
-  @JoinColumn({ name: 'admin', referencedColumnName: 'id' })
-  admin: User;
+  @ManyToOne(() => User, (user) => user.projects, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'supervisor', referencedColumnName: 'id' })
+  supervisor: User;
 
   @OneToOne(() => Donation, (donation) => donation.project, { nullable: true })
   donation: Donation;
 
-  @ManyToOne(() => Interest, (interest) => interest.project)
+  @OneToMany(() => Interest, (interest) => interest.project)
   interests: Interest[];
 
   @OneToMany(() => ProjectSubject, (projectSubject) => projectSubject.project)
