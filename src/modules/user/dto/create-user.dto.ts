@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsPhoneNumber, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, Matches } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -10,11 +10,16 @@ export class CreateUserDto {
   @IsNotEmpty()
   fullname: string;
 
-  @Matches(new RegExp(/^\d{3}\.\d{3}\.\d{3}\-\d{2}$|^\d{11}$/))
+  @IsNotEmpty()
+  @Matches(new RegExp(/^\d{3}\.\d{3}\.\d{3}\-\d{2}$|^\d{11}$/), {
+    message: 'O cpf deve ser válido.',
+  })
   cpf: string;
 
   @IsNotEmpty()
-  @IsPhoneNumber('BR')
+  @Matches(new RegExp(/^[1-9]{2}(?:[2-8]|9[0-9])[0-9]{3}[0-9]{4}/), {
+    message: 'O número deve seguir o padrão DDD+Número, ex.: 95975259054',
+  })
   phone: string;
 
   @IsNotEmpty()

@@ -53,7 +53,10 @@ export class Project {
   @Column({ name: 'status', type: 'varchar', nullable: false })
   status: ProjectStatus;
 
-  @ManyToOne(() => User, (user) => user.projects)
+  @ManyToOne(() => User, (user) => user.projects, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'supervisor', referencedColumnName: 'id' })
   supervisor: User;
 

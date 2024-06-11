@@ -23,11 +23,17 @@ export class DonationHistory {
   })
   transactionDate: Date;
 
-  @ManyToOne(() => User, (user) => user)
+  @ManyToOne(() => User, (user) => user, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 
-  @ManyToOne(() => Donation, (donation) => donation.donations)
+  @ManyToOne(() => Donation, (donation) => donation.donations, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'donation_id', referencedColumnName: 'id' })
   donation: Donation;
 }

@@ -32,7 +32,13 @@ export class User {
   @Column({ name: 'role', type: 'varchar', nullable: false, length: 30 })
   role: UserRole;
 
-  @Column({ name: 'phone', type: 'char', nullable: false, length: 9 })
+  @Column({
+    unique: true,
+    name: 'phone',
+    type: 'char',
+    nullable: false,
+    length: 11,
+  })
   phone: string;
 
   @Column({

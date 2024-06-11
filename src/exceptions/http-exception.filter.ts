@@ -1,12 +1,19 @@
 import 'dotenv/config';
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+
+interface ValidationErrorResponse {
+  status: HttpStatus.BAD_REQUEST;
+  message: Array<{ property: string; message: string }>;
+  error: string;
+}
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -21,36 +28,42 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     const response = ctx.getResponse();
 
-    const statusCode =
+    const status =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const message =
       exception instanceof HttpException
-        ? exception.message || exception.message
+        ? exception.message
         : 'Internal server error';
 
     const devErrorResponse: any = {
-      statusCode,
+      status,
       timestamp: new Date().toISOString(),
       path: request.url,
       method: request.method,
-      errorName: exception?.name,
+      error: exception?.name,
       message: exception?.message,
     };
 
     const prodErrorResponse: any = {
-      statusCode,
+      status,
       message,
     };
     this.logger.log(
-      `request method: ${request.method} request url${request.url}`,
+      `Request method: ${request.method} Request url${request.url}`,
       JSON.stringify(devErrorResponse),
     );
 
+    if (exception instanceof BadRequestException) {
+      const response = exception.getResponse() as ValidationErrorResponse;
+      devErrorResponse.message = response.message;
+      prodErrorResponse.message = response.message;
+    }
+
     response
-      .status(statusCode)
+      .status(status)
       .json(
         process.env.NODE_ENV === 'development'
           ? devErrorResponse

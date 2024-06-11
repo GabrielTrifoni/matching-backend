@@ -64,8 +64,10 @@ export class InterestController {
   @Get(':id')
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  findOne(@Param('id') id: string) {
-    const interest = this.interestService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const interest = await this.interestService.findOne(+id);
+
+    console.log(interest);
 
     return {
       status: HttpStatus.OK,

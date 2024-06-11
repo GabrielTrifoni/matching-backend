@@ -46,30 +46,6 @@ export class UserController {
     };
   }
 
-  @Post('/subjects')
-  @UseGuards(AuthGuard, RoleGuard)
-  @Roles(UserRole.STUDENT)
-  async associate(@Body() dto: UserWithSubjectDto): Promise<MyResponse<void>> {
-    await this.userService.associateWithSubject(dto);
-
-    return {
-      status: HttpStatus.CREATED,
-      message: 'Os assuntos foram associados com sucesso.',
-    };
-  }
-
-  @Delete('/subjects')
-  @UseGuards(AuthGuard, RoleGuard)
-  @Roles(UserRole.STUDENT)
-  async dissociate(@Body() dto: UserWithSubjectDto): Promise<MyResponse<void>> {
-    await this.userService.dissociateWithSubject(dto);
-
-    return {
-      status: HttpStatus.OK,
-      message: 'Os assuntos foram dissociados com sucesso.',
-    };
-  }
-
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     this.userService.update(id, updateUserDto);

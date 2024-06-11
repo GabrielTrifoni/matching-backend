@@ -20,11 +20,17 @@ export class Interest {
   @Column({ name: 'reason', type: 'varchar', length: 255, nullable: false })
   reason: string;
 
-  @ManyToOne(() => User, (user) => user.interests)
+  @ManyToOne(() => User, (user) => user.interests, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 
-  @ManyToOne(() => Project, (project) => project.interests)
+  @ManyToOne(() => Project, (project) => project.interests, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'project_id', referencedColumnName: 'id' })
   project: Project;
 }

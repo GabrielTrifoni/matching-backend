@@ -7,11 +7,17 @@ export class ProjectSubject {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => Project, (project) => project.subjects)
+  @ManyToOne(() => Project, (project) => project.subjects, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'project_id', referencedColumnName: 'id' })
   project: Project;
 
-  @ManyToOne(() => Subject, (subject) => subject.projectSubject)
+  @ManyToOne(() => Subject, (subject) => subject.projectSubject, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'id_Subject', referencedColumnName: 'id' })
   subject: Subject;
 }

@@ -7,11 +7,17 @@ export class UserSubject {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => User, (user) => user.subjects)
+  @ManyToOne(() => User, (user) => user.subjects, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 
-  @ManyToOne(() => Subject, (subject) => subject.userSubject)
+  @ManyToOne(() => Subject, (subject) => subject.userSubject, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'subject_id', referencedColumnName: 'id' })
   subject: Subject;
 }
