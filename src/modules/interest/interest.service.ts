@@ -1,9 +1,11 @@
 import {
-  ConflictException,
   Inject,
   Injectable,
   NotFoundException,
+  ConflictException,
+  UseFilters,
   forwardRef,
+  ArgumentsHost,
 } from '@nestjs/common';
 import { CreateInterestDto } from './dto/create-interest.dto';
 import { UpdateInterestDto } from './dto/update-interest.dto';
@@ -16,6 +18,7 @@ import { UserService } from '@modules/user/user.service';
 import { ProjectService } from '@modules/project/project.service';
 import { IAuthUser } from '@modules/auth/auth.service';
 import { UpdateInterestStatusDto } from './dto/update-interest-status.dto';
+import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
 
 @Injectable()
 export class InterestService {
@@ -33,12 +36,24 @@ export class InterestService {
     const user = await this.userService.findOne(email);
     const project = await this.projectService.findOne(id);
 
-    const interest = this.interestRepository.findOne({
+    const interest = await this.interestRepository.findOne({
       where: { user, project },
     });
 
     if (interest) {
       throw new ConflictException('O interesse já foi criado');
+    }
+
+    const [allInterests, count] = await this.interestRepository.findAndCount({
+      where: {
+        project: project,
+      },
+    });
+
+    if (project.slots === count) {
+      throw new ConflictException(
+        'Esse projeto já está com todas as vagas preenchidas',
+      );
     }
 
     const newInterest = {

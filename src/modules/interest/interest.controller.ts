@@ -8,6 +8,8 @@ import {
   Delete,
   HttpStatus,
   UseGuards,
+  UseFilters,
+  HttpException,
 } from '@nestjs/common';
 import { InterestService } from './interest.service';
 import { CreateInterestDto } from './dto/create-interest.dto';
@@ -34,11 +36,11 @@ export class InterestController {
   @Post()
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  create(
+  async create(
     @Body() createInterestDto: CreateInterestDto,
     @AuthUser() user: IAuthUser,
   ) {
-    this.interestService.create(createInterestDto, user);
+    await this.interestService.create(createInterestDto, user);
 
     return {
       status: HttpStatus.OK,

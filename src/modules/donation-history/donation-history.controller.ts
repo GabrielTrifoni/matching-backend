@@ -6,10 +6,17 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { DonationHistoryService } from './donation-history.service';
 import { CreateDonationHistoryDto } from './dto/create-donation-history.dto';
 import { UpdateDonationHistoryDto } from './dto/update-donation-history.dto';
+import { AuthUser } from 'src/decorators/user.decorator';
+import { IAuthUser } from '@modules/auth/auth.service';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RoleGuard } from 'src/guards/role.guard';
+import { UserRole } from 'src/enums/role.enum';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('donation-histories')
 export class DonationHistoryController {
@@ -18,19 +25,30 @@ export class DonationHistoryController {
   ) {}
 
   @Post()
-  create(@Body() createDonationHistoryDto: CreateDonationHistoryDto) {
-    return this.donationHistoryService.create(createDonationHistoryDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.donationHistoryService.findAll();
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
+  create(
+    @Body() createDonationHistoryDto: CreateDonationHistoryDto,
+    @AuthUser() user: IAuthUser,
+  ) {
+    return this.donationHistoryService.create(createDonationHistoryDto, user);
   }
 
   @Get(':id')
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
+  findAllByDonation(@Param('id') donationId: number) {
+    return this.donationHistoryService.findAllByDonations(donationId);
+  }
+
+  @Get(':id')
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
   findOne(@Param('id') id: string) {
     return this.donationHistoryService.findOne(+id);
   }
+
+  //TODO: terminar de fazer parte de history donations e donation
 
   @Patch(':id')
   update(

@@ -1,1 +1,3 @@
-export class CreateDonationHistoryDto {}
+export class CreateDonationHistoryDto {
+  transaction?: string;
+}
