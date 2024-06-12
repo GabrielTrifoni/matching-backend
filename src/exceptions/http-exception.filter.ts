@@ -3,10 +3,12 @@ import {
   ArgumentsHost,
   BadRequestException,
   Catch,
+  ConflictException,
   ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 
 interface ValidationErrorResponse {
@@ -15,7 +17,7 @@ interface ValidationErrorResponse {
   error: string;
 }
 
-@Catch()
+@Catch(ConflictException, BadRequestException, NotFoundException)
 export class HttpExceptionFilter implements ExceptionFilter {
   private readonly logger: Logger;
 
@@ -23,7 +25,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     this.logger = new Logger();
   }
 
-  catch(exception: Error, host: ArgumentsHost): any {
+  catch(exception: any, host: ArgumentsHost): any {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest();
     const response = ctx.getResponse();

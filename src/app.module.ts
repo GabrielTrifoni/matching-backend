@@ -11,6 +11,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { SubjectModule } from './modules/subject/subject.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './exceptions/http-exception.filter';
 
 @Module({
   imports: [
@@ -36,6 +38,12 @@ import { SharedModule } from './shared/shared.module';
     InterestModule,
     UserSubjectModule,
     ProjectSubjectModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

@@ -2,6 +2,7 @@ import {
   ArrayMinSize,
   IsArray,
   IsDate,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -36,7 +37,9 @@ export class CreateProjectDto {
   workload: number;
 
   @IsNotEmpty({ message: 'A data de fim não pode ser vazia' })
-  @IsDate({ message: 'Deve estar em um formato válido de data (YYYY-MM-DD)' })
+  @IsDateString({
+    // message: 'Deve estar em um formato válido de data (YYYY-MM-DD)',
+  })
   endDate: number;
 
   @IsNotEmpty({ message: 'É obrigatório inserir o orientador do projeto' })
