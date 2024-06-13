@@ -8,8 +8,6 @@ import {
   Delete,
   HttpStatus,
   UseGuards,
-  UseFilters,
-  HttpException,
 } from '@nestjs/common';
 import { InterestService } from './interest.service';
 import { CreateInterestDto } from './dto/create-interest.dto';
@@ -68,8 +66,6 @@ export class InterestController {
   @UseGuards(AuthGuard, RoleGuard)
   async findOne(@Param('id') id: string) {
     const interest = await this.interestService.findOne(+id);
-
-    console.log(interest);
 
     return {
       status: HttpStatus.OK,
