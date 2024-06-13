@@ -38,7 +38,7 @@ export class ProjectSubjectService {
   }
 
   async associateWithSubject(dto: ProjectWithSubjectsDto) {
-    const project = await this.projectService.findOne(dto.project);
+    const project = await this.projectService.findOneById(dto.project);
 
     const subjectsFound = await this.mapSubjects(dto.subjects);
 
@@ -62,7 +62,7 @@ export class ProjectSubjectService {
   }
 
   async dissociateWithSubject(dto: ProjectWithSubjectsDto) {
-    const project = await this.projectService.findOne(dto.project);
+    const project = await this.projectService.findOneById(dto.project);
     await this.mapSubjects(dto.subjects);
 
     await this.projectSubjectRepository.delete({
