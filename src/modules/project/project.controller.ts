@@ -83,6 +83,21 @@ export class ProjectController {
     };
   }
 
+  @Get('/supervisor')
+  @Roles(UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  async findAllBySupervisor(
+    @AuthUser() user: IAuthUser,
+  ): Promise<MyResponse<Project[]>> {
+    const projects = await this.projectService.findAllBySupervisor(user);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Projetos recuperado com sucesso',
+      payload: projects,
+    };
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<MyResponse<Project>> {
     const project = await this.projectService.findOneById(+id);
@@ -113,19 +128,6 @@ export class ProjectController {
     return {
       message: `Projeto reprovado com sucesso`,
       status: HttpStatus.OK,
-    };
-  }
-
-  @Get('/supervisor')
-  async findProjectsBySupervisor(
-    @AuthUser() user: IAuthUser,
-  ): Promise<MyResponse<Project[]>> {
-    const projects = await this.projectService.findProjectsBySupervisor(user);
-
-    return {
-      status: HttpStatus.OK,
-      message: 'Projetos recuperado com sucesso',
-      payload: projects,
     };
   }
 

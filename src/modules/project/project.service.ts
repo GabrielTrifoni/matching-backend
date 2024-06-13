@@ -154,7 +154,7 @@ export class ProjectService {
     return project;
   }
 
-  async findProjectsBySupervisor(user: IAuthUser) {
+  async findAllBySupervisor(user: IAuthUser) {
     const supervisor = await this.userService.findOne(user.email);
 
     if (!supervisor) {
