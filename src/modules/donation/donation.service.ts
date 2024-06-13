@@ -31,7 +31,7 @@ export class DonationService {
   async create(createDonationDto: CreateDonationDto) {
     const { projectId, expected } = createDonationDto;
 
-    const project = this.projectService.findOneById(projectId);
+    const project = await this.projectService.findOneById(projectId);
 
     if (!project) {
       throw new NotFoundException('Projeto para doação não encontrado');
@@ -54,10 +54,9 @@ export class DonationService {
 
     closureDate.setFullYear(openingDate.getFullYear() + 1);
 
-    // const donated = await this.donationHistoryService.findAllByDonations()
-    // TODO: descobrir como pegar todos os donate history desse donate para somar os valores e colocar no atributo donated
     const newDonation = {
       expected: expected,
+      donated: 0,
       project: project,
       opening: openingDate,
       closure: closureDate,
@@ -67,7 +66,7 @@ export class DonationService {
   }
 
   async findOne(id: number) {
-    const donation = await this.donationRepository.find({
+    const donation = await this.donationRepository.findOne({
       where: {
         id: id,
       },
@@ -78,5 +77,33 @@ export class DonationService {
     }
 
     return donation;
+  }
+
+  async sumDonatedValues(id: number) {
+    const donation = await this.findOne(id);
+
+    if (!donation) {
+      throw new NotFoundException('Doação não encontrada');
+    }
+
+    const donationsHistory =
+      await this.donationHistoryService.findAllByDonations(id);
+
+    if (!donationsHistory) {
+      return 0;
+    }
+
+    let sum = 0;
+
+    for (let donationHistory of donationsHistory) {
+      sum += donationHistory.amount;
+    }
+
+    const newDonation = {
+      ...donation,
+      donated: sum,
+    } as DeepPartial<Donation>;
+
+    await this.donationRepository.save(newDonation);
   }
 }
