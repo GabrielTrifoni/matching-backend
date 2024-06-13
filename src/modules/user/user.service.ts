@@ -66,6 +66,17 @@ export class UserService {
     return user;
   }
 
+  async getUserDetails(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    delete user.password;
+    delete user.role;
+
+    return user;
+  }
+
   async findOne(email: string): Promise<User | undefined> {
     const user = await this.userRepository.findOne({
       where: { email },

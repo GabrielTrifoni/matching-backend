@@ -8,11 +8,17 @@ import {
   Delete,
   UseGuards,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { MyResponse } from 'src/decorators/pagination.decorator';
+import {
+  MyResponse,
+  Paginated,
+  Pagination,
+  PaginationParams,
+} from 'src/decorators/pagination.decorator';
 import { Project } from '@entities/project.entity';
 import { Roles } from 'src/decorators/roles.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -21,6 +27,7 @@ import { RoleGuard } from 'src/guards/role.guard';
 import { AuthUser } from 'src/decorators/user.decorator';
 import { IAuthUser } from '@modules/auth/auth.service';
 import { UserRole } from 'src/enums/role.enum';
+import { QueryProjectDto } from './dto/query-project.dto';
 
 @Controller('projects')
 export class ProjectController {
@@ -42,13 +49,64 @@ export class ProjectController {
   }
 
   @Get()
-  findAll() {
-    return this.projectService.findAll();
+  async findAll(
+    @PaginationParams() params: Pagination,
+    @Query() query: QueryProjectDto,
+  ): Promise<MyResponse<Project[]>> {
+    const items = await this.projectService.findAll(params, query);
+
+    const { items: projects } = items;
+
+    return {
+      message: `Foram recuperados ${projects.length} projetos`,
+      status: HttpStatus.OK,
+      payload: projects,
+    };
+  }
+
+  @Get('/byUser')
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
+  async findAllByUserSubjects(
+    @PaginationParams() params: Pagination,
+    @AuthUser() user: IAuthUser,
+  ): Promise<MyResponse<Paginated<Project>>> {
+    const items = await this.projectService.findAllByUserSubjects(params, user);
+
+    const { items: projects } = items;
+
+    return {
+      message: `Foram recuperados ${projects.length} projetos`,
+      status: HttpStatus.OK,
+      payload: items,
+    };
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.projectService.findOne(+id);
+  }
+
+  @Patch(':id/approve')
+  async approveProject(@Param('id') id: string): Promise<MyResponse<Project>> {
+    await this.projectService.approveProjectById(+id);
+
+    return {
+      message: `Projeto aprovado com sucesso`,
+      status: HttpStatus.OK,
+    };
+  }
+
+  @Patch(':id/disapprove')
+  async disapproveProject(
+    @Param('id') id: string,
+  ): Promise<MyResponse<Project>> {
+    await this.projectService.disapproveProjectById(+id);
+
+    return {
+      message: `Projeto reprovado com sucesso`,
+      status: HttpStatus.OK,
+    };
   }
 
   @Patch(':id')

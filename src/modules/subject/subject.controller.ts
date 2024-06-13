@@ -21,7 +21,7 @@ export class SubjectController {
   constructor(private readonly subjectService: SubjectService) {}
 
   @Post()
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @Roles(UserRole.ADMIN)
   async create(@Body() dto: CreateSubjectDto) {
     await this.subjectService.create(dto);
 

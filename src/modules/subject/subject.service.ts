@@ -14,7 +14,7 @@ export class SubjectService {
     private readonly subjectRepository: Repository<Subject>,
   ) {}
 
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @Roles(UserRole.ADMIN)
   async create(newSubject: CreateSubjectDto) {
     await this.subjectRepository.save(newSubject);
   }

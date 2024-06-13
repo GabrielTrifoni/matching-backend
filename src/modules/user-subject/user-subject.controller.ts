@@ -18,7 +18,7 @@ import { MyResponse } from 'src/decorators/pagination.decorator';
 export class UserSubjectsController {
   constructor(private readonly userSubjectService: UserSubjectService) {}
 
-  @Post('/subjects')
+  @Post()
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.STUDENT)
   async associate(@Body() dto: UserWithSubjectDto): Promise<MyResponse<void>> {
@@ -30,7 +30,7 @@ export class UserSubjectsController {
     };
   }
 
-  @Delete('/subjects')
+  @Delete()
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.STUDENT)
   async dissociate(@Body() dto: UserWithSubjectDto): Promise<MyResponse<void>> {
