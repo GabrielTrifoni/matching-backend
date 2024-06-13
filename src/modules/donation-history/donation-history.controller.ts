@@ -5,8 +5,8 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
 import { DonationHistoryService } from './donation-history.service';
 import { CreateDonationHistoryDto } from './dto/create-donation-history.dto';
@@ -17,6 +17,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { UserRole } from 'src/enums/role.enum';
 import { Roles } from 'src/decorators/roles.decorator';
+import { MyResponse } from 'src/decorators/pagination.decorator';
 
 @Controller('donation-histories')
 export class DonationHistoryController {
@@ -27,37 +28,42 @@ export class DonationHistoryController {
   @Post()
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  create(
+  async create(
     @Body() createDonationHistoryDto: CreateDonationHistoryDto,
     @AuthUser() user: IAuthUser,
-  ) {
-    return this.donationHistoryService.create(createDonationHistoryDto, user);
+  ): Promise<MyResponse<void>> {
+    await this.donationHistoryService.create(createDonationHistoryDto, user);
+
+    return {
+      status: HttpStatus.CREATED,
+      message: 'A doação foi realizada com sucesso.',
+    };
   }
 
   @Get(':id')
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  findAllByDonation(@Param('id') donationId: number) {
-    return this.donationHistoryService.findAllByDonations(donationId);
+  async findAllByDonation(@Param('id') donationId: number) {
+    const result =
+      await this.donationHistoryService.findAllByDonations(donationId);
+
+    return result;
   }
 
   @Get(':id')
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  findOne(@Param('id') id: string) {
-    return this.donationHistoryService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.donationHistoryService.findOne(+id);
+
+    return result;
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateDonationHistoryDto: UpdateDonationHistoryDto,
   ) {
-    return this.donationHistoryService.update(+id, updateDonationHistoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.donationHistoryService.remove(+id);
+    await this.donationHistoryService.update(+id, updateDonationHistoryDto);
   }
 }
