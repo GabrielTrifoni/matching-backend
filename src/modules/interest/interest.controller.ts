@@ -113,3 +113,4 @@ export class InterestController {
     return this.interestService.remove(+id);
   }
 }
+

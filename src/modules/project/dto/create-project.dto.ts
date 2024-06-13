@@ -1,7 +1,6 @@
 import {
   ArrayMinSize,
   IsArray,
-  IsDate,
   IsDateString,
   IsInt,
   IsNotEmpty,
