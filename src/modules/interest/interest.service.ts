@@ -77,6 +77,9 @@ export class InterestService {
     return { total, items: interests, page, size };
   }
 
+  //TODO: retornar todos os interesses de um determinado projeto
+  async findAllByProjectId() {}
+
   async findOne(id: number) {
     const interest = await this.interestRepository.findOne({
       where: {

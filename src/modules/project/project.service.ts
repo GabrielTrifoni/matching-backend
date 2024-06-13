@@ -154,11 +154,5 @@ export class ProjectService {
     return project;
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} Project`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} Project`;
-  }
+  //TODO: check project as concluded
 }

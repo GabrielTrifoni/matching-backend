@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { DonationHistoryService } from './donation-history.service';
 import { CreateDonationHistoryDto } from './dto/create-donation-history.dto';
-import { UpdateDonationHistoryDto } from './dto/update-donation-history.dto';
 import { AuthUser } from 'src/decorators/user.decorator';
 import { IAuthUser } from '@modules/auth/auth.service';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -50,20 +49,23 @@ export class DonationHistoryController {
     return result;
   }
 
-  @Get(':id')
+  @Get()
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  async findOne(@Param('id') id: string) {
-    const result = await this.donationHistoryService.findOne(+id);
+  async findAllByUser(@AuthUser() user: IAuthUser) {
+    const result = await this.donationHistoryService.findAllByUser(user);
 
     return result;
   }
 
-  @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateDonationHistoryDto: UpdateDonationHistoryDto,
-  ) {
-    await this.donationHistoryService.update(+id, updateDonationHistoryDto);
+  //TODO: verificar como fazer a rota deste endpoint
+  @Get('project/:id')
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
+  async findAllByProjectId(@Param('id') projectId: number) {
+    const result =
+      await this.donationHistoryService.findAllByProjectId(projectId);
+
+    return result;
   }
 }

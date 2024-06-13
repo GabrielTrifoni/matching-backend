@@ -69,15 +69,35 @@ export class DonationHistoryService {
     return donations;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} DonationHistory`;
+  async findAllByUser({ email }: IAuthUser) {
+    const user = await this.userService.findOne(email);
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    const donations = await this.donationHistoryRepository.find({
+      where: {
+        user: user,
+      },
+    });
+
+    return donations;
   }
 
-  update(id: number, updateDonationHistoryDto: UpdateDonationHistoryDto) {
-    return `This action updates a #${id} DonationHistory`;
-  }
+  async findAllByProjectId(projectId: number) {
+    const project = await this.projectService.findOneById(projectId);
 
-  remove(id: number) {
-    return `This action removes a #${id} DonationHistory`;
+    if (!project) {
+      throw new NotFoundException('Projeto não encontrado.');
+    }
+
+    const donations = await this.donationHistoryRepository.find({
+      where: {
+        donation: project.donation,
+      },
+    });
+
+    return donations;
   }
 }
