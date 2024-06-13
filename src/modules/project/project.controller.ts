@@ -28,6 +28,7 @@ import { AuthUser } from 'src/decorators/user.decorator';
 import { IAuthUser } from '@modules/auth/auth.service';
 import { UserRole } from 'src/enums/role.enum';
 import { QueryProjectDto } from './dto/query-project.dto';
+import { DeepPartial } from 'typeorm';
 
 @Controller('projects')
 export class ProjectController {
@@ -112,6 +113,19 @@ export class ProjectController {
     return {
       message: `Projeto reprovado com sucesso`,
       status: HttpStatus.OK,
+    };
+  }
+
+  @Get('/supervisor')
+  async findProjectsBySupervisor(
+    @AuthUser() user: IAuthUser,
+  ): Promise<MyResponse<Project[]>> {
+    const projects = await this.projectService.findProjectsBySupervisor(user);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Projetos recuperado com sucesso',
+      payload: projects,
     };
   }
 

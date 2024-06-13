@@ -154,5 +154,21 @@ export class ProjectService {
     return project;
   }
 
+  async findProjectsBySupervisor(user: IAuthUser) {
+    const supervisor = await this.userService.findOne(user.email);
+
+    if (!supervisor) {
+      throw new NotFoundException('Supervisor não encontrado.');
+    }
+
+    const projects = await this.projectRepository.find({
+      where: {
+        supervisor: supervisor,
+      },
+    });
+
+    return projects;
+  }
+
   //TODO: check project as concluded
 }
