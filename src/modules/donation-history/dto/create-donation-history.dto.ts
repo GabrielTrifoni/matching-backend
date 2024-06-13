@@ -1,3 +1,5 @@
 export class CreateDonationHistoryDto {
-  transaction?: string;
+  amount: number;
+  transaction: string;
+  donation: number;
 }

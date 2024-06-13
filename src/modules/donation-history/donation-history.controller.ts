@@ -48,8 +48,6 @@ export class DonationHistoryController {
     return this.donationHistoryService.findOne(+id);
   }
 
-  //TODO: terminar de fazer parte de history donations e donation
-
   @Patch(':id')
   update(
     @Param('id') id: string,

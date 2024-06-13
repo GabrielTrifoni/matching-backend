@@ -14,10 +14,30 @@ export class Donation {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ name: 'donated', type: 'decimal', nullable: false })
+  @Column({
+    name: 'donated',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: {
+      to: (value: number) => value.toString(),
+      from: (value: string) => parseFloat(value),
+    },
+    nullable: false,
+  })
   donated: number;
 
-  @Column({ name: 'expected', type: 'decimal', nullable: false })
+  @Column({
+    name: 'expected',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: {
+      to: (value: number) => value.toString(),
+      from: (value: string) => parseFloat(value),
+    },
+    nullable: false,
+  })
   expected: number;
 
   @Column({ name: 'opening', type: 'date', nullable: false })

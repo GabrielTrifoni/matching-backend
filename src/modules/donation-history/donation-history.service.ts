@@ -31,21 +31,30 @@ export class DonationHistoryService {
     createDonationHistoryDto: CreateDonationHistoryDto,
     { email }: IAuthUser,
   ) {
-    const { transaction } = createDonationHistoryDto;
+    const { transaction, amount, donation } = createDonationHistoryDto;
     const user = await this.userService.findOne(email);
 
     if (!user) {
       throw new NotFoundException('Usuário não encontrado.');
     }
 
+    const donationObj = await this.donationService.findOne(donation);
+
+    if (!donationObj) {
+      throw new NotFoundException('Doação não encontrada.');
+    }
+
     const newDonationHistory = {
+      amount: amount,
       transaction: transaction,
       transactionDate: new Date(),
       user: user,
-      // donation?:
+      donation: donationObj,
     } as DeepPartial<DonationHistory>;
 
     await this.donationHistoryRepository.save(newDonationHistory);
+
+    await this.donationService.sumDonatedValues(donation);
   }
 
   async findAllByDonations(donationId: number) {
