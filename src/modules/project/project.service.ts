@@ -113,7 +113,7 @@ export class ProjectService {
   }
 
   async approveProjectById(projectId: number) {
-    const project = await this.findOne(projectId);
+    const project = await this.findOneById(projectId);
 
     if (project.status === ProjectStatus.DISAPPROVED.toUpperCase()) {
       throw new ConflictException('O projeto foi reprovado');
@@ -128,7 +128,7 @@ export class ProjectService {
   }
 
   async disapproveProjectById(projectId: number) {
-    const project = await this.findOne(projectId);
+    const project = await this.findOneById(projectId);
 
     if (project.status === ProjectStatus.APPROVED.toUpperCase()) {
       throw new ConflictException('O projeto foi aprovado');
@@ -142,7 +142,7 @@ export class ProjectService {
     await this.projectRepository.save(disapprovedProject);
   }
 
-  async findOne(id: number) {
+  async findOneById(id: number) {
     const project = await this.projectRepository.findOne({
       where: { id },
     });

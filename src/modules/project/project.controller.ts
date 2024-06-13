@@ -83,8 +83,14 @@ export class ProjectController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<MyResponse<Project>> {
+    const project = await this.projectService.findOneById(+id);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Projeto recuperado com sucesso',
+      payload: project,
+    };
   }
 
   @Patch(':id/approve')

@@ -31,7 +31,7 @@ export class DonationService {
   async create(createDonationDto: CreateDonationDto) {
     const { projectId, expected } = createDonationDto;
 
-    const project = this.projectService.findOne(projectId);
+    const project = this.projectService.findOneById(projectId);
 
     if (!project) {
       throw new NotFoundException('Projeto para doação não encontrado');
