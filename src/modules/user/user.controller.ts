@@ -13,13 +13,14 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-import { UserWithSubjectDto } from './dto/user-subject.dto';
 import { MyResponse } from 'src/decorators/pagination.decorator';
 import { User } from '@entities/user.entity';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { UserRole } from 'src/enums/role.enum';
 import { Roles } from 'src/decorators/roles.decorator';
+import { AuthUser } from 'src/decorators/user.decorator';
+import { IAuthUser } from '@modules/auth/auth.service';
 
 @Controller('users')
 export class UserController {
@@ -36,6 +37,8 @@ export class UserController {
   }
 
   @Get()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   async findOne(@Body('email') email: string): Promise<MyResponse<User>> {
     const user = await this.userService.findOneWithSubjects(email);
 
@@ -44,6 +47,15 @@ export class UserController {
       message: 'Usuário recuperado com sucesso.',
       payload: user,
     };
+  }
+
+  @Get('/details')
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  async getUserDetails(@AuthUser() user: IAuthUser) {
+    const userDetails = await this.userService.getUserDetails(user.email);
+
+    return userDetails;
   }
 
   @Patch(':id')

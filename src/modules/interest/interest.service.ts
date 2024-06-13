@@ -63,8 +63,6 @@ export class InterestService {
       project,
     } as DeepPartial<Interest>;
 
-    console.log(newInterest);
-
     await this.interestRepository.save(newInterest);
   }
 
