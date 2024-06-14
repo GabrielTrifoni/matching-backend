@@ -59,6 +59,8 @@ export class UserController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
   update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     this.userService.update(id, updateUserDto);
 
@@ -69,6 +71,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN)
   remove(@Param('id') id: number) {
     this.userService.delete(id);
 

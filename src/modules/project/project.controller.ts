@@ -5,14 +5,12 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
   HttpStatus,
   Query,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 import {
   MyResponse,
   Paginated,
@@ -35,7 +33,7 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async create(
     @Body() dto: CreateProjectDto,
@@ -109,6 +107,8 @@ export class ProjectController {
     };
   }
 
+  @Roles(UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
   @Patch(':id/approve')
   async approveProject(@Param('id') id: string): Promise<MyResponse<Project>> {
     await this.projectService.approveProjectById(+id);
@@ -119,6 +119,8 @@ export class ProjectController {
     };
   }
 
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
   @Patch(':id/disapprove')
   async disapproveProject(
     @Param('id') id: string,
@@ -130,6 +132,7 @@ export class ProjectController {
       status: HttpStatus.OK,
     };
   }
+<<<<<<< Updated upstream
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
@@ -140,4 +143,6 @@ export class ProjectController {
   // remove(@Param('id') id: string) {
   //   return this.projectService.remove(+id);
   // }
+=======
+>>>>>>> Stashed changes
 }

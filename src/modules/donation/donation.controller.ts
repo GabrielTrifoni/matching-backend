@@ -12,7 +12,7 @@ export class DonationController {
   constructor(private readonly donationService: DonationService) {}
 
   @Post()
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async create(@Body() dto: CreateDonationDto): Promise<MyResponse<void>> {
     await this.donationService.create(dto);
