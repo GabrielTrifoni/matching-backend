@@ -98,7 +98,8 @@ export class InterestService {
     const interests = await this.interestRepository.find({
       where: {
         project: project,
-      }
+      },
+      relations: ['user', 'project'],
     });
 
     return interests;
