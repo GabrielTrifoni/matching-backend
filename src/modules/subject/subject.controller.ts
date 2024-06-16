@@ -36,7 +36,7 @@ export class SubjectController {
   }
 
   @Get()
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async findAll(): Promise<MyResponse<Subject[]>> {
     const subjects = await this.subjectService.findAll();

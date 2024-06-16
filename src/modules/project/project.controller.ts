@@ -119,7 +119,7 @@ export class ProjectController {
     };
   }
 
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   @Patch(':id/disapprove')
   async disapproveProject(
@@ -129,6 +129,34 @@ export class ProjectController {
 
     return {
       message: `Projeto reprovado com sucesso`,
+      status: HttpStatus.OK,
+    };
+  }
+
+  @Roles(UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Patch(':id/start')
+  async changeStatusToInProgress(
+    @Param('id') id: string,
+  ): Promise<MyResponse<Project>> {
+    await this.projectService.changeProjectStatusToInProgress(+id);
+
+    return {
+      message: `Projeto iniciado com sucesso`,
+      status: HttpStatus.OK,
+    };
+  }
+
+  @Roles(UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Patch(':id/conclude')
+  async changeStatusToConcluded(
+    @Param('id') id: string,
+  ): Promise<MyResponse<Project>> {
+    await this.projectService.changeProjectStatusToConcluded(+id);
+
+    return {
+      message: `Projeto concluído com sucesso`,
       status: HttpStatus.OK,
     };
   }
