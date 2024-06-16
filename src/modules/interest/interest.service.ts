@@ -18,6 +18,7 @@ import { ProjectService } from '@modules/project/project.service';
 import { IAuthUser } from '@modules/auth/auth.service';
 import { UpdateInterestStatusDto } from './dto/update-interest-status.dto';
 import { ProjectStatus } from 'src/enums/project-status.enum';
+import { Project } from '@entities/project.entity';
 
 @Injectable()
 export class InterestService {
@@ -87,7 +88,21 @@ export class InterestService {
   }
 
   //TODO: retornar todos os interesses de um determinado projeto
-  async findAllByProjectId() {}
+  async findAllByProjectId(id: number) {
+    const project = await this.projectService.findOneById(id);
+
+    if (!project) {
+      throw new NotFoundException('Projeto não encontrado');
+    }
+
+    const interests = await this.interestRepository.find({
+      where: {
+        project: project,
+      }
+    });
+
+    return interests;
+  }
 
   async findOne(id: number) {
     const interest = await this.interestRepository.findOne({

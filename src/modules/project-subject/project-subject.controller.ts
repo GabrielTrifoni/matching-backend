@@ -19,7 +19,7 @@ export class ProjectSubjectController {
   constructor(private readonly projectSubjectsService: ProjectSubjectService) {}
 
   @Post()
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async associate(@Body() dto: ProjectWithSubjectsDto) {
     await this.projectSubjectsService.associateWithSubject(dto);
@@ -31,7 +31,7 @@ export class ProjectSubjectController {
   }
 
   @Delete()
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async disassociate(@Body() dto: ProjectWithSubjectsDto) {
     await this.projectSubjectsService.dissociateWithSubject(dto);

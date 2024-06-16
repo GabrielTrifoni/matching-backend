@@ -77,6 +77,19 @@ export class InterestController {
     };
   }
 
+  @Get('project/:id')
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  async findByProject(@Param('id') id: string) {
+    const interests = await this.interestService.findAllByProjectId(+id);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Interesses obtidos com sucesso.',
+      payload: interests
+    };
+  }
+
   @Patch(':id')
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
@@ -93,7 +106,7 @@ export class InterestController {
   }
 
   @Patch(':id/updateStatus')
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async updateStatus(
     @Param('id') id: string,
