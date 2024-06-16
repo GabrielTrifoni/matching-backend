@@ -32,7 +32,7 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async create(
     @Body() dto: CreateProjectDto,
@@ -111,6 +111,8 @@ export class ProjectController {
     };
   }
 
+  @Roles(UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
   @Patch(':id/approve')
   async approveProject(@Param('id') id: string): Promise<MyResponse<Project>> {
     await this.projectService.approveProjectById(+id);
@@ -121,6 +123,8 @@ export class ProjectController {
     };
   }
 
+  @Roles(UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
   @Patch(':id/disapprove')
   async disapproveProject(
     @Param('id') id: string,
@@ -133,13 +137,44 @@ export class ProjectController {
     };
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-  //   return this.projectService.update(+id, updateProjectDto);
-  // }
+  @Roles(UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Patch(':id/start')
+  async changeStatusToInProgress(
+    @Param('id') id: string,
+  ): Promise<MyResponse<Project>> {
+    await this.projectService.changeProjectStatusToInProgress(+id);
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.projectService.remove(+id);
-  // }
+    return {
+      message: `Projeto iniciado com sucesso`,
+      status: HttpStatus.OK,
+    };
+  }
+
+  @Roles(UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Patch(':id/conclude')
+  async changeStatusToConcluded(
+    @Param('id') id: string,
+  ): Promise<MyResponse<Project>> {
+    await this.projectService.changeProjectStatusToConcluded(+id);
+
+    return {
+      message: `Projeto concluído com sucesso`,
+      status: HttpStatus.OK,
+    };
+  }
+// <<<<<<< Updated upstream
+
+//   // @Patch(':id')
+//   // update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
+//   //   return this.projectService.update(+id, updateProjectDto);
+//   // }
+
+//   // @Delete(':id')
+//   // remove(@Param('id') id: string) {
+//   //   return this.projectService.remove(+id);
+//   // }
+// =======
+// >>>>>>> Stashed changes
 }

@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   HttpStatus,
   UseGuards,
   UseFilters,
@@ -49,7 +48,7 @@ export class InterestController {
   }
 
   @Get()
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async findAll(
     @PaginationParams() params: Pagination,
@@ -64,7 +63,7 @@ export class InterestController {
   }
 
   @Get(':id')
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async findOne(@Param('id') id: string) {
     const interest = await this.interestService.findOne(+id);
@@ -107,10 +106,4 @@ export class InterestController {
       message: 'Interesse atualizado com sucesso.',
     };
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.interestService.remove(+id);
-  }
 }
-

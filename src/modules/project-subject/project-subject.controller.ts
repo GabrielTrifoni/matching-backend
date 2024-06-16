@@ -33,7 +33,7 @@ export class ProjectSubjectController {
   @Delete()
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
-  async dissassociate(@Body() dto: ProjectWithSubjectsDto) {
+  async disassociate(@Body() dto: ProjectWithSubjectsDto) {
     await this.projectSubjectsService.dissociateWithSubject(dto);
 
     return {

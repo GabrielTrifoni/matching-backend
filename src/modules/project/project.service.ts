@@ -111,6 +111,8 @@ export class ProjectService {
 
     if (project.status === ProjectStatus.DISAPPROVED.toUpperCase()) {
       throw new ConflictException('O projeto foi reprovado');
+    } else if (project.status !== ProjectStatus.UNDER_ANALYSIS.toUpperCase()) {
+      throw new ConflictException('O projeto não está em análise')
     }
 
     const approvedProject = {
@@ -126,6 +128,8 @@ export class ProjectService {
 
     if (project.status === ProjectStatus.APPROVED.toUpperCase()) {
       throw new ConflictException('O projeto foi aprovado');
+    } else if (project.status !== ProjectStatus.UNDER_ANALYSIS.toUpperCase()) {
+      throw new ConflictException('O projeto não está em análise')
     }
 
     const disapprovedProject = {
@@ -134,6 +138,36 @@ export class ProjectService {
     } as DeepPartial<Project>;
 
     await this.projectRepository.save(disapprovedProject);
+  }
+
+  async changeProjectStatusToInProgress(projectId: number) {
+    const project = await this.findOneById(projectId);
+
+    if (project.status !== ProjectStatus.APPROVED.toUpperCase()) {
+      throw new ConflictException('O projeto não está com status de aprovado');
+    }
+
+    const inProgressProject = {
+      ...project,
+      status: ProjectStatus.IN_PROGRESS.toUpperCase(),
+    } as DeepPartial<Project>;
+
+    await this.projectRepository.save(inProgressProject);
+  }
+
+  async changeProjectStatusToConcluded(projectId: number) {
+    const project = await this.findOneById(projectId);
+
+    if (project.status !== ProjectStatus.IN_PROGRESS.toUpperCase()) {
+      throw new ConflictException('O projeto não está com status em andamento');
+    }
+
+    const concludedProject = {
+      ...project,
+      status: ProjectStatus.CONCLUDED.toUpperCase(),
+    } as DeepPartial<Project>;
+
+    await this.projectRepository.save(concludedProject);
   }
 
   async findOneById(id: number) {
