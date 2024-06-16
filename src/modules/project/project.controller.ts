@@ -5,14 +5,12 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
   HttpStatus,
   Query,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 import {
   MyResponse,
   Paginated,
@@ -28,7 +26,6 @@ import { AuthUser } from 'src/decorators/user.decorator';
 import { IAuthUser } from '@modules/auth/auth.service';
 import { UserRole } from 'src/enums/role.enum';
 import { QueryProjectDto } from './dto/query-project.dto';
-import { DeepPartial } from 'typeorm';
 
 @Controller('projects')
 export class ProjectController {
@@ -53,26 +50,31 @@ export class ProjectController {
   async findAll(
     @PaginationParams() params: Pagination,
     @Query() query: QueryProjectDto,
-  ): Promise<MyResponse<Project[]>> {
+  ): Promise<MyResponse<Paginated<Project>>> {
     const items = await this.projectService.findAll(params, query);
 
-    const { items: projects } = items;
+    const { items: data } = items;
 
     return {
-      message: `Foram recuperados ${projects.length} projetos`,
+      message: `Foram recuperados ${data.length} projetos`,
       status: HttpStatus.OK,
-      payload: projects,
+      payload: items,
     };
   }
 
   @Get('/byUser')
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async findAllByUserSubjects(
     @PaginationParams() params: Pagination,
+    @Query() query: QueryProjectDto,
     @AuthUser() user: IAuthUser,
   ): Promise<MyResponse<Paginated<Project>>> {
-    const items = await this.projectService.findAllByUserSubjects(params, user);
+    const items = await this.projectService.findAllByUserSubjects(
+      params,
+      query,
+      user,
+    );
 
     const { items: projects } = items;
 

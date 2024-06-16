@@ -17,7 +17,6 @@ import { ProjectStatus } from 'src/enums/project-status.enum';
 import { DeepPartial, Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { QueryProjectDto } from './dto/query-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
 import { InterestStatus } from 'src/enums/interest-status.enum';
 
 @Injectable()
@@ -59,7 +58,7 @@ export class ProjectService {
 
   async findAll(pagination: Pagination, query: QueryProjectDto) {
     const { page, limit, size, offset } = pagination;
-    const { slots, status } = query;
+    const { status } = query;
 
     const [data, total] = await this.projectRepository.findAndCount({
       take: limit,
@@ -70,22 +69,19 @@ export class ProjectService {
       where: {
         status: (status && status.toUpperCase()) as ProjectStatus,
       },
-      relations: ['interests'],
+      relations: ['interests', 'subjects', 'subjects.subject'],
     });
 
-    const projects =
-      slots === 'with_slot'
-        ? data.filter((p) => p.interests.length < p.slots)
-        : data.filter((p) => p.interests.length === p.slots);
-
-    return { total, items: projects, page, size };
+    return { totalPages: Math.ceil(total / size), items: data, page, size };
   }
 
   async findAllByUserSubjects(
     pagination: Pagination,
+    query: QueryProjectDto,
     { email }: IAuthUser,
   ): Promise<Paginated<Project>> {
     const { page, limit, size, offset } = pagination;
+    const { slots, status } = query;
 
     const user = await this.userService.findOne(email);
 
@@ -95,21 +91,19 @@ export class ProjectService {
       order: {
         startDate: 'DESC',
       },
-      relations: ['interests'],
       where: {
         subjects: user.subjects,
-        status: ProjectStatus.APPROVED.toUpperCase() as ProjectStatus,
+        status: (status && status.toUpperCase()) as ProjectStatus,
       },
+      relations: ['interests', 'subjects', 'subjects.subject'],
     });
 
-    data.forEach((item) => {
-      item.interests = item.interests.filter(
-        (interest) => interest.status === InterestStatus.APPROVED,
-      );
-    });
-    const projects = data.filter((p) => p.interests.length < p.slots);
+    const projects =
+      slots === 'with_slot'
+        ? data.filter((p) => p.interests.length < p.slots)
+        : data.filter((p) => p.interests.length === p.slots);
 
-    return { total, items: projects, page, size };
+    return { totalPages: Math.ceil(total / size), items: projects, page, size };
   }
 
   async approveProjectById(projectId: number) {

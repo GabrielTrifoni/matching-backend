@@ -8,6 +8,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/login')
   async sign(@Body() signIn: Record<string, any>) {
+    console.log(signIn);
+
     return this.authService.signIn(signIn.email, signIn.password);
   }
 }

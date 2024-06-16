@@ -20,7 +20,7 @@ export class UserSubjectsController {
 
   @Post()
   @UseGuards(AuthGuard, RoleGuard)
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   async associate(@Body() dto: UserWithSubjectDto): Promise<MyResponse<void>> {
     await this.userSubjectService.associateWithSubject(dto);
 
@@ -32,7 +32,7 @@ export class UserSubjectsController {
 
   @Delete()
   @UseGuards(AuthGuard, RoleGuard)
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   async dissociate(@Body() dto: UserWithSubjectDto): Promise<MyResponse<void>> {
     await this.userSubjectService.dissociateWithSubject(dto);
 

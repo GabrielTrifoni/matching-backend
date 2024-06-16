@@ -20,7 +20,7 @@ export interface Pagination {
 }
 
 export type Paginated<T> = {
-  total: number;
+  totalPages: number;
   items: T[];
   page: number;
   size: number;
@@ -29,7 +29,7 @@ export type Paginated<T> = {
 export const PaginationParams = createParamDecorator(
   (_data, ctx: ExecutionContext): Pagination => {
     const req: Request = ctx.switchToHttp().getRequest();
-    const page = Number(req.query.page as string);
+    const page = Number(req.query.page as string) - 1;
     const size = Number(req.query.size as string);
 
     const MAX_SIZE = 10;

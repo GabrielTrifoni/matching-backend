@@ -4,6 +4,7 @@ import {
   NotFoundException,
   ConflictException,
   forwardRef,
+  ForbiddenException,
 } from '@nestjs/common';
 import { CreateInterestDto } from './dto/create-interest.dto';
 import { UpdateInterestDto } from './dto/update-interest.dto';
@@ -16,6 +17,7 @@ import { UserService } from '@modules/user/user.service';
 import { ProjectService } from '@modules/project/project.service';
 import { IAuthUser } from '@modules/auth/auth.service';
 import { UpdateInterestStatusDto } from './dto/update-interest-status.dto';
+import { ProjectStatus } from 'src/enums/project-status.enum';
 
 @Injectable()
 export class InterestService {
@@ -41,14 +43,21 @@ export class InterestService {
       throw new ConflictException('O interesse já foi criado');
     }
 
-    const [allInterests, count] = await this.interestRepository.findAndCount({
+    const [, count] = await this.interestRepository.findAndCount({
       where: {
         project: project,
+        status: InterestStatus.APPROVED.toUpperCase() as InterestStatus,
       },
     });
 
-    if (project.slots === count) {
+    if (project.status === ProjectStatus.IN_PROGRESS.toUpperCase()) {
       throw new ConflictException(
+        'Esse projeto já está em andamento e não aceita novos interesses',
+      );
+    }
+
+    if (project.slots === count) {
+      throw new ForbiddenException(
         'Esse projeto já está com todas as vagas preenchidas',
       );
     }
@@ -74,7 +83,7 @@ export class InterestService {
       },
     });
 
-    return { total, items: interests, page, size };
+    return { totalPages: total, items: interests, page, size };
   }
 
   //TODO: retornar todos os interesses de um determinado projeto

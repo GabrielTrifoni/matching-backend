@@ -26,6 +26,8 @@ export class AuthService {
   ): Promise<{ access_token: string }> {
     const user = await this.userService.findOne(email);
 
+    console.log(user);
+
     if (!user) {
       throw new NotFoundException('O usuário não foi encontrado.');
     }

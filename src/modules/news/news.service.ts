@@ -40,7 +40,7 @@ export class NewsService {
       },
     });
 
-    return { total, items: news, page, size };
+    return { totalPages: total, items: news, page, size };
   }
 
   async findOne(id: number) {
