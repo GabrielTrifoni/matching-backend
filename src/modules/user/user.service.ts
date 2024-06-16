@@ -69,6 +69,7 @@ export class UserService {
   async getUserDetails(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },
+      relations: ['subjects', 'subjects.subject'],
     });
 
     delete user.password;
