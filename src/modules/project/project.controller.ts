@@ -111,6 +111,19 @@ export class ProjectController {
     };
   }
 
+  @Get(':id/subjects')
+  async getProjectSubjects(
+    @Param('id') id: string,
+  ): Promise<MyResponse<string[]>> {
+    const subjects = await this.projectService.getProjectSubjectNames(+id);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Projeto recuperado com sucesso',
+      payload: subjects,
+    };
+  }
+
   @Roles(UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   @Patch(':id/approve')
@@ -164,17 +177,17 @@ export class ProjectController {
       status: HttpStatus.OK,
     };
   }
-// <<<<<<< Updated upstream
+  // <<<<<<< Updated upstream
 
-//   // @Patch(':id')
-//   // update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-//   //   return this.projectService.update(+id, updateProjectDto);
-//   // }
+  //   // @Patch(':id')
+  //   // update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
+  //   //   return this.projectService.update(+id, updateProjectDto);
+  //   // }
 
-//   // @Delete(':id')
-//   // remove(@Param('id') id: string) {
-//   //   return this.projectService.remove(+id);
-//   // }
-// =======
-// >>>>>>> Stashed changes
+  //   // @Delete(':id')
+  //   // remove(@Param('id') id: string) {
+  //   //   return this.projectService.remove(+id);
+  //   // }
+  // =======
+  // >>>>>>> Stashed changes
 }

@@ -18,6 +18,8 @@ import { DeepPartial, Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { QueryProjectDto } from './dto/query-project.dto';
 import { InterestStatus } from 'src/enums/interest-status.enum';
+import { SubjectService } from '@modules/subject/subject.service';
+import { Subject } from '@entities/subject.entity';
 
 @Injectable()
 export class ProjectService {
@@ -28,6 +30,8 @@ export class ProjectService {
     private readonly projectSubjectService: ProjectSubjectService,
     @Inject(forwardRef(() => InterestService))
     private readonly interestService: InterestService,
+    @Inject(forwardRef(() => InterestService))
+    private readonly subjectService: SubjectService,
     private readonly userService: UserService,
   ) {}
 
@@ -112,7 +116,7 @@ export class ProjectService {
     if (project.status === ProjectStatus.DISAPPROVED.toUpperCase()) {
       throw new ConflictException('O projeto foi reprovado');
     } else if (project.status !== ProjectStatus.UNDER_ANALYSIS.toUpperCase()) {
-      throw new ConflictException('O projeto não está em análise')
+      throw new ConflictException('O projeto não está em análise');
     }
 
     const approvedProject = {
@@ -129,7 +133,7 @@ export class ProjectService {
     if (project.status === ProjectStatus.APPROVED.toUpperCase()) {
       throw new ConflictException('O projeto foi aprovado');
     } else if (project.status !== ProjectStatus.UNDER_ANALYSIS.toUpperCase()) {
-      throw new ConflictException('O projeto não está em análise')
+      throw new ConflictException('O projeto não está em análise');
     }
 
     const disapprovedProject = {
@@ -173,6 +177,7 @@ export class ProjectService {
   async findOneById(id: number) {
     const project = await this.projectRepository.findOne({
       where: { id },
+      relations: ['supervisor', 'subjects'],
     });
 
     if (!project) {
@@ -196,6 +201,29 @@ export class ProjectService {
     });
 
     return projects;
+  }
+
+  async getProjectSubjectNames(projectID: number) {
+    const project = await this.findOneById(projectID);
+
+    if (!project) {
+      throw new NotFoundException('Nenhum projeto encontrado!');
+    }
+
+    const subjectsResultList = new Array<string>();
+
+    if (!project.subjects) {
+      throw new NotFoundException(
+        'Este projeto não possui subjects vinculados',
+      );
+    }
+
+    for (const subject of project.subjects) {
+      const result = await this.projectSubjectService.findOne(subject.id);
+      subjectsResultList.push(result.subject.subject);
+    }
+
+    return subjectsResultList;
   }
 
   //TODO: check project as concluded

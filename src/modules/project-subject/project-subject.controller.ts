@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpStatus,
   Post,
   UseGuards,
@@ -27,6 +28,19 @@ export class ProjectSubjectController {
     return {
       status: HttpStatus.CREATED,
       message: 'Os assuntos foram associados com sucesso.',
+    };
+  }
+
+  @Get()
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
+  @UseGuards(AuthGuard, RoleGuard)
+  async findOneByID(id: number) {
+    const result = await this.projectSubjectsService.findOne(id);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Project-Subject recuperado com sucesso',
+      payload: result,
     };
   }
 

@@ -23,6 +23,19 @@ export class ProjectSubjectService {
     private readonly projectSubjectRepository: Repository<ProjectSubject>,
   ) {}
 
+  async findOne(id: number) {
+    const result = await this.projectSubjectRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ['subject'],
+    });
+
+    if (!result) throw new NotFoundException('Sem resultados');
+
+    return result;
+  }
+
   async associateWithSubjectInCreation(project: number, subjects: number[]) {
     const subjectsFound = await this.mapSubjects(subjects);
 
