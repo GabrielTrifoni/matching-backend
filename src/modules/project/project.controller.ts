@@ -99,6 +99,21 @@ export class ProjectController {
       payload: projects,
     };
   }
+  
+  @Get('/student')
+  @Roles(UserRole.STUDENT)
+  @UseGuards(AuthGuard, RoleGuard)
+  async findAllByStudent(
+    @AuthUser() user: IAuthUser,
+  ): Promise<MyResponse<Project[]>> {
+    const projects = await this.projectService.findAllByStudent(user);
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Projetos recuperado com sucesso',
+      payload: projects,
+    };
+  }
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<MyResponse<Project>> {

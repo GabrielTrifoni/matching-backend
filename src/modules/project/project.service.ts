@@ -33,7 +33,7 @@ export class ProjectService {
     @Inject(forwardRef(() => InterestService))
     private readonly subjectService: SubjectService,
     private readonly userService: UserService,
-  ) {}
+  ) { }
 
   async create(dto: CreateProjectDto, user: IAuthUser) {
     const supervisor = await this.userService.findOne(dto.supervisor);
@@ -203,28 +203,45 @@ export class ProjectService {
     return projects;
   }
 
-  async getProjectSubjectNames(projectID: number) {
-    const project = await this.findOneById(projectID);
+  async findAllByStudent(user: IAuthUser) {
+    const student = await this.userService.getUserDetails(user.email);
 
-    if (!project) {
-      throw new NotFoundException('Nenhum projeto encontrado!');
+    if (!student) {
+      throw new NotFoundException('Supervisor não encontrado.');
     }
 
-    const subjectsResultList = new Array<string>();
+    const projects = await this.projectRepository
+      .createQueryBuilder('project')
+      .leftJoin('project.interests', 'interest')
+      .where('interest.user_id = :studentId', { studentId: student.id })
+      .andWhere('interest.status = :status', { status: 'APROVADO' })
+      .getMany();
 
-    if (!project.subjects) {
-      throw new NotFoundException(
-        'Este projeto não possui subjects vinculados',
-      );
-    }
-
-    for (const subject of project.subjects) {
-      const result = await this.projectSubjectService.findOne(subject.id);
-      subjectsResultList.push(result.subject.subject);
-    }
-
-    return subjectsResultList;
+    return projects
   }
+
+  async getProjectSubjectNames(projectID: number) {
+  const project = await this.findOneById(projectID);
+
+  if (!project) {
+    throw new NotFoundException('Nenhum projeto encontrado!');
+  }
+
+  const subjectsResultList = new Array<string>();
+
+  if (!project.subjects) {
+    throw new NotFoundException(
+      'Este projeto não possui subjects vinculados',
+    );
+  }
+
+  for (const subject of project.subjects) {
+    const result = await this.projectSubjectService.findOne(subject.id);
+    subjectsResultList.push(result.subject.subject);
+  }
+
+  return subjectsResultList;
+}
 
   //TODO: check project as concluded
 }

@@ -69,11 +69,11 @@ export class UserService {
   async getUserDetails(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },
-      relations: ['subjects', 'subjects.subject'],
+      relations: ['subjects', 'subjects.subject', 'interests'],
     });
 
     delete user.password;
-    delete user.role;
+    // delete user.role;
 
     return user;
   }
