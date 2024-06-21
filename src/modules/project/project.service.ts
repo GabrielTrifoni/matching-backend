@@ -17,9 +17,7 @@ import { ProjectStatus } from 'src/enums/project-status.enum';
 import { DeepPartial, Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { QueryProjectDto } from './dto/query-project.dto';
-import { InterestStatus } from 'src/enums/interest-status.enum';
 import { SubjectService } from '@modules/subject/subject.service';
-import { Subject } from '@entities/subject.entity';
 
 @Injectable()
 export class ProjectService {
@@ -33,7 +31,7 @@ export class ProjectService {
     @Inject(forwardRef(() => InterestService))
     private readonly subjectService: SubjectService,
     private readonly userService: UserService,
-  ) { }
+  ) {}
 
   async create(dto: CreateProjectDto, user: IAuthUser) {
     const supervisor = await this.userService.findOne(dto.supervisor);
@@ -217,31 +215,31 @@ export class ProjectService {
       .andWhere('interest.status = :status', { status: 'APROVADO' })
       .getMany();
 
-    return projects
+    return projects;
   }
 
   async getProjectSubjectNames(projectID: number) {
-  const project = await this.findOneById(projectID);
+    const project = await this.findOneById(projectID);
 
-  if (!project) {
-    throw new NotFoundException('Nenhum projeto encontrado!');
+    if (!project) {
+      throw new NotFoundException('Nenhum projeto encontrado!');
+    }
+
+    const subjectsResultList = new Array<string>();
+
+    if (!project.subjects) {
+      throw new NotFoundException(
+        'Este projeto não possui subjects vinculados',
+      );
+    }
+
+    for (const subject of project.subjects) {
+      const result = await this.projectSubjectService.findOne(subject.id);
+      subjectsResultList.push(result.subject.subject);
+    }
+
+    return subjectsResultList;
   }
-
-  const subjectsResultList = new Array<string>();
-
-  if (!project.subjects) {
-    throw new NotFoundException(
-      'Este projeto não possui subjects vinculados',
-    );
-  }
-
-  for (const subject of project.subjects) {
-    const result = await this.projectSubjectService.findOne(subject.id);
-    subjectsResultList.push(result.subject.subject);
-  }
-
-  return subjectsResultList;
-}
 
   //TODO: check project as concluded
 }

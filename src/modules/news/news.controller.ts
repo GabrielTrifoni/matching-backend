@@ -46,8 +46,6 @@ export class NewsController {
   }
 
   @Get()
-  @Roles(UserRole.STUDENT)
-  @UseGuards(AuthGuard, RoleGuard)
   async findAll(
     @PaginationParams() params: Pagination,
   ): Promise<MyResponse<Paginated<News>>> {

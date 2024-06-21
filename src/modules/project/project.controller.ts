@@ -99,7 +99,7 @@ export class ProjectController {
       payload: projects,
     };
   }
-  
+
   @Get('/student')
   @Roles(UserRole.STUDENT)
   @UseGuards(AuthGuard, RoleGuard)
