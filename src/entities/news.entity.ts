@@ -4,8 +4,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Attachment } from './attachments.entity';
 
 @Entity()
 export class News {
@@ -32,8 +34,9 @@ export class News {
   })
   modifiedDate: Date;
 
-  @Column({ name: 'attachments', type: 'varchar', length: 512, nullable: true })
-  attachments: string;
+  @OneToOne(() => Attachment, (attachment) => attachment.news, { cascade: true },)
+  @JoinColumn({ name: 'attachment_id', referencedColumnName: 'id' })
+  attachment: Attachment;
 
   @ManyToOne(() => User, (user) => user.news)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })

@@ -10,6 +10,4 @@ export class CreateNewsDto {
     message: 'A descrição não pode ser vazia.',
   })
   description: string;
-
-  attachments?: string;
 }

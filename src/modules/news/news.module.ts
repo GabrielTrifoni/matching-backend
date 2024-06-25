@@ -7,11 +7,13 @@ import { User } from 'src/entities/user.entity';
 import { Subject } from '@entities/subject.entity';
 import { UserSubject } from '@entities/user-subject.entity';
 import { UserModule } from '@modules/user/user.module';
+import { AttachmentModule } from '@modules/attachment/attachments.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([News, User, Subject, UserSubject]),
     UserModule,
+    AttachmentModule
   ],
   controllers: [NewsController],
   providers: [NewsService],
