@@ -1,5 +1,6 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { News } from './news.entity';
+import { Project } from './project.entity';
 
 @Entity()
 export class Attachment {
@@ -20,4 +21,7 @@ export class Attachment {
 
   @OneToOne(() => News, news => news.attachment)
   news: News;
+
+  @OneToOne(() => Project, project => project.attachment)
+  project: Project;
 }

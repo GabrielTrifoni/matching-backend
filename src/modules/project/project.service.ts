@@ -18,6 +18,7 @@ import { DeepPartial, Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { QueryProjectDto } from './dto/query-project.dto';
 import { SubjectService } from '@modules/subject/subject.service';
+import { Attachment } from '@entities/attachments.entity';
 
 @Injectable()
 export class ProjectService {
@@ -33,7 +34,7 @@ export class ProjectService {
     private readonly userService: UserService,
   ) {}
 
-  async create(dto: CreateProjectDto, user: IAuthUser) {
+  async create(dto: CreateProjectDto, user: IAuthUser, attachment: Attachment) {
     const supervisor = await this.userService.findOne(dto.supervisor);
 
     const newProject = {
@@ -41,6 +42,7 @@ export class ProjectService {
       startDate: new Date(),
       supervisor,
       status: ProjectStatus.UNDER_ANALYSIS.toUpperCase(),
+      attachment
     } as DeepPartial<Project>;
 
     const project = await this.projectRepository.save(newProject);
@@ -68,10 +70,17 @@ export class ProjectService {
       order: {
         startDate: 'DESC',
       },
+      select: {
+        attachment: {
+          id: true,
+          fileName: true,
+          url: true,
+        }
+      },
       where: {
         status: (status && status.toUpperCase()) as ProjectStatus,
       },
-      relations: ['interests', 'subjects', 'subjects.subject'],
+      relations: ['interests', 'subjects', 'subjects.subject', 'attachment'],
     });
 
     return { totalPages: Math.ceil(total / size), items: data, page, size };
@@ -93,11 +102,18 @@ export class ProjectService {
       order: {
         startDate: 'DESC',
       },
+      select: {
+        attachment: {
+          id: true,
+          fileName: true,
+          url: true,
+        }
+      },
       where: {
         subjects: user.subjects,
         status: (status && status.toUpperCase()) as ProjectStatus,
       },
-      relations: ['interests', 'subjects', 'subjects.subject'],
+      relations: ['interests', 'subjects', 'subjects.subject', 'attachment'],
     });
 
     const projects =
@@ -175,7 +191,7 @@ export class ProjectService {
   async findOneById(id: number) {
     const project = await this.projectRepository.findOne({
       where: { id },
-      relations: ['supervisor', 'subjects'],
+      relations: ['supervisor', 'subjects', 'attachment'],
     });
 
     if (!project) {

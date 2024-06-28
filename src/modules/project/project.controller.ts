@@ -8,6 +8,8 @@ import {
   UseGuards,
   HttpStatus,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -26,19 +28,30 @@ import { AuthUser } from 'src/decorators/user.decorator';
 import { IAuthUser } from '@modules/auth/auth.service';
 import { UserRole } from 'src/enums/role.enum';
 import { QueryProjectDto } from './dto/query-project.dto';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import multerConfig from '@modules/attachment/multer.config';
+import { AttachmentService } from '@modules/attachment/attachments.service';
 
 @Controller('projects')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly projectService: ProjectService,
+    private readonly attachmentService: AttachmentService
+  ) {}
 
   @Post()
   @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
+  @UseInterceptors(FileInterceptor('cover', multerConfig))
   async create(
-    @Body() dto: CreateProjectDto,
+    @Body('data') data: string,
     @AuthUser() user: IAuthUser,
+    @UploadedFile() file: Express.MulterS3.File
   ): Promise<MyResponse<Project>> {
-    await this.projectService.create(dto, user);
+    const dto = JSON.parse(data) as CreateProjectDto;
+    const attachment = await this.attachmentService.saveFile(file)
+
+    await this.projectService.create(dto, user, attachment);
 
     return {
       status: HttpStatus.CREATED,

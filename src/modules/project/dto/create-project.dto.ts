@@ -21,9 +21,6 @@ export class CreateProjectDto {
   @IsNotEmpty({ message: 'O projeto deve estar relacionado a um PAEG' })
   paeg: string;
 
-  @IsOptional()
-  attachments?: string;
-
   @IsNotEmpty({ message: 'A quantidade de vagas não pode ser vazia.' })
   @IsInt({ message: 'A quantidade de vagas deve ser um número inteiro' })
   slots: number;

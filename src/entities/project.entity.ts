@@ -12,6 +12,7 @@ import {
 import { Donation } from './donation.entity';
 import { ProjectSubject } from './project-subject.entity';
 import { ProjectStatus } from 'src/enums/project-status.enum';
+import { Attachment } from './attachments.entity';
 
 @Entity()
 export class Project {
@@ -35,31 +36,29 @@ export class Project {
   @Column({ name: 'paeg', type: 'varchar', length: 64, nullable: false })
   paeg: string;
 
-  @Column({ name: 'attachments', type: 'varchar', length: 512, nullable: true })
-  attachments: string;
-
+  
   @Column({ name: 'slots', type: 'int', nullable: false })
   slots: number;
 
   @Column({ name: 'workload', type: 'float', nullable: false })
   workload: number;
-
+  
   @Column({ name: 'start_date', type: 'date', nullable: false })
   startDate: Date;
-
+  
   @Column({ name: 'end_date', type: 'date', nullable: false })
   endDate: Date;
 
   @Column({ name: 'status', type: 'varchar', nullable: false })
   status: ProjectStatus;
-
+  
   @ManyToOne(() => User, (user) => user.projects, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'supervisor', referencedColumnName: 'id' })
   supervisor: User;
-
+  
   @OneToOne(() => Donation, (donation) => donation.project, { nullable: true })
   donation: Donation;
 
@@ -68,4 +67,8 @@ export class Project {
 
   @OneToMany(() => ProjectSubject, (projectSubject) => projectSubject.project)
   subjects: ProjectSubject[];
+  
+  @OneToOne(() => Attachment, (attachment) => attachment.project, { cascade: true },)
+  @JoinColumn({ name: 'attachment_id', referencedColumnName: 'id' })
+  attachment: Attachment;
 }

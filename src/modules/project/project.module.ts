@@ -7,6 +7,7 @@ import { InterestModule } from '@modules/interest/interest.module';
 import { UserModule } from '@modules/user/user.module';
 import { ProjectSubjectModule } from '@modules/project-subject/project-subject.module';
 import { SubjectModule } from '@modules/subject/subject.module';
+import { AttachmentModule } from '@modules/attachment/attachments.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { SubjectModule } from '@modules/subject/subject.module';
     forwardRef(() => ProjectSubjectModule),
     forwardRef(() => SubjectModule),
     UserModule,
+    AttachmentModule,
   ],
   controllers: [ProjectController],
   providers: [ProjectService],
