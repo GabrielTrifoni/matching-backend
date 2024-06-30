@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+  matching:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=matching
+      - POSTGRES_PASSWORD=matching
+      - POSTGRES_DB=matching
+    ports:
+      - "5432:5432"
+    volumes:
+      - matchingData:/var/lib/postgresql/data
+    networks:
+      - my-network
+    container_name: matching-db
+
+volumes:
+  matchingData:
+    driver: local
+
+networks:
+  my-network:
+    driver: bridge
+
