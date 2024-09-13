@@ -24,7 +24,7 @@ import { IAuthUser } from '@modules/auth/auth.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   async create(@Body() dto: CreateUserDto): Promise<MyResponse<void>> {
@@ -33,6 +33,17 @@ export class UserController {
     return {
       status: HttpStatus.CREATED,
       message: 'Usuário criado com sucesso',
+    };
+  }
+
+  @Get()
+  async findAll() {
+    const users = await this.userService.findAll();
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Usuários recuperados com sucesso.',
+      payload: users,
     };
   }
 

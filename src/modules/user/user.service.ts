@@ -44,8 +44,9 @@ export class UserService {
     });
   }
 
-  findAll() {
-    return `This action returns all User`;
+  async findAll() {
+    const users = await this.userRepository.find();
+    return users; 
   }
 
   async findOneWithSubjects(email: string) {
