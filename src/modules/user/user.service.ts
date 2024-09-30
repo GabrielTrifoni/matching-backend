@@ -25,7 +25,7 @@ export class UserService {
     private readonly subjectRepository: Repository<Subject>,
     @InjectRepository(UserSubject)
     private readonly userSubjectRepository: Repository<UserSubject>,
-  ) {}
+  ) { }
 
   async create(newUser: CreateUserDto) {
     const user = await this.userRepository.findOne({
@@ -46,7 +46,7 @@ export class UserService {
 
   async findAll() {
     const users = await this.userRepository.find();
-    return users; 
+    return users;
   }
 
   async findOneWithSubjects(email: string) {
@@ -92,36 +92,34 @@ export class UserService {
   }
 
   async update(id: number, dto: UpdateUserDto) {
-    const user = await this.userRepository.findOne({ where: { id: id } });
+    const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    const bio = dto.bio ? dto.bio : user.bio;
-    const cpf = dto.cpf ? dto.cpf : user.cpf;
-    const password = dto.password
-      ? await bcrypt.hash(dto.password, this.saltRounds)
-      : user.password;
-    const fullname = dto.fullname ? dto.fullname : user.fullname;
-    const phone = dto.phone ? dto.phone : user.phone;
-    const email = dto.email ? dto.email : user.email;
+    if (dto.bio !== undefined) {
+      user.bio = dto.bio;
+    }
+    if (dto.cpf !== undefined) {
+      user.cpf = dto.cpf;
+    }
+    if (dto.password !== undefined) {
+      user.password = await bcrypt.hash(dto.password, this.saltRounds);
+    }
+    if (dto.fullname !== undefined) {
+      user.fullname = dto.fullname;
+    }
+    if (dto.phone !== undefined) {
+      user.phone = dto.phone;
+    }
+    if (dto.email !== undefined) {
+      user.email = dto.email;
+    }
 
-    const updatedUser = {
-      id: user.id,
-      cpf,
-      email,
-      password,
-      fullname,
-      phone,
-      bio,
-      role: user.role,
-    } as DeepPartial<User>;
-
-    await this.delete(id);
-
-    await this.userRepository.save(updatedUser);
+    await this.userRepository.save(user);
   }
+
 
   async delete(id: number) {
     const user = await this.userRepository.findOne({ where: { id: id } });
