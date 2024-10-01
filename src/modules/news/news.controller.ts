@@ -86,7 +86,7 @@ export class NewsController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.STUDENT)
+  @Roles(UserRole.STUDENT, UserRole.SUPERVISOR)
   @UseGuards(AuthGuard, RoleGuard)
   async update(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
     await this.newsService.update(+id, updateNewsDto);
