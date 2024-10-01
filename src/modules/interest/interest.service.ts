@@ -132,7 +132,7 @@ export class InterestService {
   async updateStatus(id: number, { status }: UpdateInterestStatusDto) {
     const interest = await this.findOne(id);
 
-    if (interest.status === 'APROVADO' || interest.status === 'REPROVADO') {
+    if (interest.status === status) {
       throw new ConflictException('O status do interesse já foi atualizado');
     }
 
