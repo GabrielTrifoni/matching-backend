@@ -25,6 +25,7 @@ export class SubjectController {
 
   @Post()
   @Roles(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   async create(@Body() dto: CreateSubjectDto) {
     await this.subjectService.create(dto);
 
